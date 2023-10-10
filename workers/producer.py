@@ -1,10 +1,10 @@
-import json
 from confluent_kafka import Producer
+import json
 
 ###############################################################################################
 ###############################################################################################
 
-# GOOD DOCS FOR PRODUCER/CONSUMER API
+# GOOD DOCS FOR PRODUCER API
 # https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#producer
 
 class create_producer:
@@ -23,15 +23,12 @@ class create_producer:
             print('MESSAGE PUSHED')
 
     # PUSH MESSAGE TO A KAFK TOPIC
-    def push_msg(self, topic_name, json_data):
-
-        # SERIALIZE JSON INPUT TO BYTES
-        serialized_msg = json.dumps(json_data).encode('UTF-8')
+    def push_msg(self, topic_name, bytes_data):
 
         # PUSH MESSAGE TO KAFKA TOPIC
         self.kafka_client.produce(
             topic_name, 
-            value=serialized_msg,
+            value=bytes_data,
             on_delivery=self.ack_callback,
         )
 
@@ -45,10 +42,17 @@ class create_producer:
 kafka_producer = create_producer()
 topic_name = 'yolo_input'
 
+# CUSTOM DATA => BYTES SERIALIZED -- INVERSE OF THE CONSUMERS DESERIALIZER
+def custom_serializer(data):
+    return json.dumps(data).encode('UTF-8')
+
 # LOOP N TIMES
 for nth in range(5):
 
-    # PUSH MESSAGE TO TOPIC
-    kafka_producer.push_msg(topic_name, {
+    # SERIALIZE MSG TO BYTES -- DOESNT NEED TO BE JSON
+    serialized_data = custom_serializer({
         'foo': nth
     })
+
+    # PUSH MESSAGE TO TOPIC
+    kafka_producer.push_msg(topic_name, serialized_data)

@@ -1,10 +1,12 @@
 version: '3.7'
 
+# SHARED KAFKA PROPS
 x-kafka_shared: &kafka_shared
     image: confluentinc/cp-kafka:7.3.0
     depends_on:
         - kafka_zookeeper
 
+# SHARED KAFKA ENV
 x-kafka_env: &kafka_env
     KAFKA_AUTO_CREATE_TOPICS_ENABLE: True
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
