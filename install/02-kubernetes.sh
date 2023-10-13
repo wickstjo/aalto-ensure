@@ -13,7 +13,7 @@ EOF
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 # sudo systemctl enable --now kubelet
 
-# CONFIGURE KUBERNETES NETWORK THING
+# # CONFIGURE KUBERNETES NETWORK THING
 # CNI_PLUGINS_VERSION="v1.3.0"
 # ARCH="amd64"
 # DEST="/opt/cni/bin"
