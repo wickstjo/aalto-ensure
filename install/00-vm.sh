@@ -1,19 +1,29 @@
+# IN VIRTUALBOX NETWORK SETTINGS
+# CHANGE FROM NAT TO NETWORK BRIDGE
+
 # FIX CENTOS NETWORK SETTINGS
 echo "DNS1=8.8.8.8" | cat >> /etc/sysconfig/network-scripts/ifcfg-enp0s3
 echo "DNS2=8.8.4.4" | cat >> /etc/sysconfig/network-scripts/ifcfg-enp0s3
 echo "ONBOOT=yes" | cat >> /etc/sysconfig/network-scripts/ifcfg-enp0s3
+sudo reboot
 
+# VERIFY INTERNET ACCESS
 ping www.google.com -c 5
 
+sudo yum install -y openssh-server openssh-clients
+ip addr
+
 ################################################################
 ################################################################
 
-# INSTALL EDITOR SO WE CAN AVOID USING VIM
-sudo yum install -y nano
-sudo yum -y install openssh-server openssh-clients
+# INSTALL NECESSARY GENERATIC TOOLS
+sudo yum install -y nano git wget curl yum-utils
 
-# FIND MACHINES IP ADDRESS
+# FETCH MASTER IP ADDRESS
 ip addr | grep 192
+
+# REBOOT TO SAVE SETTINGS
+sudo reboot
 
 # ssh IP ADDR
 # CHANGE MACHINE

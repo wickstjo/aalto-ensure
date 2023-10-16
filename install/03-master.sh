@@ -8,20 +8,53 @@ sudo systemctl disable firewalld
 # sudo nano /etc/containerd/config.toml 
 
 # UPDATE IP TABLE THING FROM 0 => 1
-echo "1" | cat >> /proc/sys/net/bridge/bridge-nf-call-iptables
+# echo "1" | cat >> /proc/sys/net/bridge/bridge-nf-call-iptables
 
-# SETUP CLUSTER CONTROL PLANE (SET MACHINE IN KUBE MASTER MODE) ?
-sudo kubeadm init --apiserver-advertise-address=192.168.1.230
+echo "##########################################################################################"
+echo "##########################################################################################"
+echo ""
+echo ""
+
+# SETUP CLUSTER CONTROL PLANE
+sudo kubeadm init \
+    --pod-network-cidr=192.168.0.0/16 \
+    --cri-socket=unix:///var/run/cri-dockerd.sock
+
+echo ""
+echo ""
+echo "##########################################################################################"
+echo "##########################################################################################"
+
+# LAUNCH THE CLUSTER THROUGH BOILERPLATE CODE
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# CHECK THAT ALL KUBE SERVICES ARE RUNNING
+kubectl get pods -A
+
+# SETUP CALICO POD NETWORKING (CORE DNS)
+# https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+
+# TRACK CALICOS PROGRESS
+kubectl get pods -A --watch
+
+
+# https://www.youtube.com/watch?v=o6bxo0Oeg6o&ab_channel=davidhwang
+
+
+#####################################################################################################################
+#####################################################################################################################
+
+# sudo kubeadm init --apiserver-advertise-address=192.168.1.230
 # kubeadm init --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address=master_nodeIP
 
 # THE COMMAND GENERATES A JOIN STRING
 # kubeadm join 192.168.1.230:6443 \
 #     --token c50a2z.i3iiqcd7fayt4qg8 \
 # 	--discovery-token-ca-cert-hash sha256:70e24a4d99b20e19722bf7cfaaf059077ece71768227f6f0a0d90b3e20eb8498 
-
-
-#####################################################################################################################
-#####################################################################################################################
 
 
 # # To start using your cluster, you need to run the following as a regular user:

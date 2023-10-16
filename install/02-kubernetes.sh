@@ -1,4 +1,7 @@
-# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+# sudo nano 02-kubernetes.sh
+# sudo chmod +x 02-kubernetes.sh
+
+# OVERWRITE KUBE CONFIG FILE
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -9,9 +12,25 @@ gpgkey=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key
 exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 EOF
 
-# INSTALL KUBERNETES & START THE PROCESS
+# INSTALL KUBE COMPONENTS & START KUBELET 
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-# sudo systemctl enable --now kubelet
+sudo systemctl enable --now kubelet
+
+echo "###############################################################################"
+echo ""
+echo ""
+
+# CHECK THAT EVERYTHING IS OK
+kubelet --version
+kubeadm version
+kubectl version
+
+echo ""
+echo ""
+echo "###############################################################################"
+
+##############################################################################################################
+##############################################################################################################
 
 # # CONFIGURE KUBERNETES NETWORK THING
 # CNI_PLUGINS_VERSION="v1.3.0"
@@ -39,4 +58,4 @@ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 # curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/krel/templates/latest/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 # START THE KUBELET PROCESS
-systemctl enable --now kubelet
+# systemctl enable --now kubelet
