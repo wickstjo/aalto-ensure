@@ -4,12 +4,6 @@ sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 # sudo swapoff -a && systemctl stop firewalld && sudo systemctl disable firewalld
 
-# COMMENT OUT: disabled_plugins = ["cri"]
-# sudo nano /etc/containerd/config.toml 
-
-# UPDATE IP TABLE THING FROM 0 => 1
-# echo "1" | cat >> /proc/sys/net/bridge/bridge-nf-call-iptables
-
 echo "##########################################################################################"
 echo "##########################################################################################"
 echo ""
@@ -19,6 +13,11 @@ echo ""
 sudo kubeadm init \
     --pod-network-cidr=192.168.0.0/16 \
     --cri-socket=unix:///var/run/cri-dockerd.sock
+
+# sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/cri-dockerd.sock
+
+# clear && kubectl get nodes --watch
+# kubectl label nodes worker2 kubernetes.io/role=worker
 
 echo ""
 echo ""
@@ -31,6 +30,7 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # CHECK THAT ALL KUBE SERVICES ARE RUNNING
+# CORE DNS SHOULD STILL BE PENDING
 kubectl get pods -A
 
 # SETUP CALICO POD NETWORKING (CORE DNS)
