@@ -1,37 +1,46 @@
+# sudo nano master.sh && sudo chmod +x master.sh && sudo ./master.sh
+
+# SET HOSTNAME FOR SSH CLARITY
+# sudo hostnamectl set-hostname master
+
 # TURN OFF LINUX SWAP & FIREWALL
 sudo swapoff -a
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 # sudo swapoff -a && systemctl stop firewalld && sudo systemctl disable firewalld
 
-echo "##########################################################################################"
-echo "##########################################################################################"
-echo ""
-echo ""
+echo -e "\n##########################################################################################\n"
+
+# TO START CLUSTER AFTER REBOOT
+# systemctl enable kubelet
 
 # SETUP CLUSTER CONTROL PLANE
 sudo kubeadm init \
-    --pod-network-cidr=192.168.0.0/16 \
-    --cri-socket=unix:///var/run/cri-dockerd.sock
+    --cri-socket=unix:///var/run/cri-dockerd.sock \
+    --pod-network-cidr=10.0.0.0/8
+    # --pod-network-cidr=192.168.0.0/16 \
 
-# sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --cri-socket=unix:///var/run/cri-dockerd.sock
+# CIDR NETWORK FIX
+# https://stackoverflow.com/questions/56135923/kube-state-metrics-error-failed-to-create-client-i-o-timeout
 
-# clear && kubectl get nodes --watch
-# kubectl label nodes worker2 kubernetes.io/role=worker
+echo -e "\n##########################################################################################\n"
 
-echo ""
-echo ""
-echo "##########################################################################################"
-echo "##########################################################################################"
+# ADD THE FOLLOWING PROPS TO THE KUBE CONFIG
+# sudo nano /etc/kubernetes/admin.conf
+
+# authentication:
+#   webhook: true
+# authorization:
+#   mode: Webhook
 
 # LAUNCH THE CLUSTER THROUGH BOILERPLATE CODE
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-# CHECK THAT ALL KUBE SERVICES ARE RUNNING
-# CORE DNS SHOULD STILL BE PENDING
-kubectl get pods -A
+# mkdir -p $HOME/.kube && sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config && kubectl get pods -A --watch
+
+echo -e "\n##########################################################################################\n"
 
 # SETUP CALICO POD NETWORKING (CORE DNS)
 # https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises
@@ -39,42 +48,22 @@ curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/ca
 kubectl apply -f calico.yaml
 
 # TRACK CALICOS PROGRESS
-kubectl get pods -A --watch
+clear && kubectl get pods -A --watch
 
+# curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/calico.yaml -O && kubectl apply -f calico.yaml && kubectl get pods -A --watch
 
-# https://www.youtube.com/watch?v=o6bxo0Oeg6o&ab_channel=davidhwang
+# POST INSTALL STUFF
+echo -e "\n##########################################################################################\n"
 
+# GENERATE JOIN STRING
+kubeadm token create --print-join-command
 
-#####################################################################################################################
-#####################################################################################################################
+echo -e "\n##########################################################################################\n"
 
-# sudo kubeadm init --apiserver-advertise-address=192.168.1.230
-# kubeadm init --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address=master_nodeIP
+kubectl get nodes --watch
 
-# THE COMMAND GENERATES A JOIN STRING
-# kubeadm join 192.168.1.230:6443 \
-#     --token c50a2z.i3iiqcd7fayt4qg8 \
-# 	--discovery-token-ca-cert-hash sha256:70e24a4d99b20e19722bf7cfaaf059077ece71768227f6f0a0d90b3e20eb8498 
+# WATCH CLUSTER
+# clear && kubectl get nodes --watch
 
-
-# # To start using your cluster, you need to run the following as a regular user:
-
-# mkdir -p $HOME/.kube
-# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-# sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-# # Alternatively, if you are the root user, you can run:
-
-# export KUBECONFIG=/etc/kubernetes/admin.conf
-
-
-#####################################################################################################################
-#####################################################################################################################
-
-# OPEN IN ANOTHER TAB
-# kubectl proxy --port=8080
-
-
-# You should now deploy a pod network to the cluster.
-# Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
-#   https://kubernetes.io/docs/concepts/cluster-administration/addons/
+# RENAME WORKER NODES
+# kubectl label nodes worker1 kubernetes.io/role=worker
