@@ -8,7 +8,8 @@ image:
   # -- Repository to pull the image from
   repository: "quay.io/sustainable_computing_io/kepler"
   # -- Image tag, if empty it will get it from the chart's appVersion
-  tag: "release-0.6"
+  tag: ""
+  #tag: "release-0.6"
   # -- Pull policy
   pullPolicy: Always
 
@@ -50,7 +51,8 @@ resources: {}
 # -- Extra environment variables
 extraEnvVars:
   KEPLER_LOG_LEVEL: "2"
-  ENABLE_GPU: "true"
+  #ENABLE_GPU: "true"
+  ENABLE_GPU: "false"
   ENABLE_EBPF_CGROUPID: "true"
   EXPOSE_IRQ_COUNTER_METRICS: "true"
   EXPOSE_KUBELET_METRICS: "true"

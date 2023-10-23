@@ -1,6 +1,10 @@
 # IN VIRTUALBOX NETWORK SETTINGS
 # CHANGE FROM NAT TO NETWORK BRIDGE
 
+# MAKE SURE THE MACHINE HAS AT LEAST
+    # 4096 MB OF MEMORY
+    # 4 CPU CORES
+
 # FIX CENTOS NETWORK SETTINGS
 echo "DNS1=8.8.8.8" | cat >> /etc/sysconfig/network-scripts/ifcfg-enp0s3
 echo "DNS2=8.8.4.4" | cat >> /etc/sysconfig/network-scripts/ifcfg-enp0s3
