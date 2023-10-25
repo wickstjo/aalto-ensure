@@ -12,9 +12,9 @@ sudo systemctl disable firewalld
 
 echo -e "\n##########################################################################################\n"
 
-kubeadm join 192.168.1.152:6443 \
-    --token eyly0u.xisykck7t3kj5i4e \
-    --discovery-token-ca-cert-hash sha256:671fe2eee2c3a033401bacc8f1465614d10242057aa7420b6b15629f4aeeebeb \
+kubeadm join 192.168.1.128:6443 \
+    --token yahpih.06jqo9c8ii0xijzx \
+    --discovery-token-ca-cert-hash sha256:c4ce418eca97403c3128d5aea9353c7e53d2acded135b292e71fc5ebd69da13f \
     --cri-socket=unix:///var/run/cri-dockerd.sock
 
 # --cri-socket=unix:///var/run/cri-dockerd.sock
@@ -24,6 +24,3 @@ kubeadm join 192.168.1.152:6443 \
 # kubectl get pods -A -w
 # kubectl label nodes worker1 kubernetes.io/role=worker
 # kubectl get nodes -w
-
-
-# sudo kubeadm reset --cri-socket=unix:///var/run/cri-dockerd.sock

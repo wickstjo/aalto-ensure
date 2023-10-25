@@ -16,11 +16,11 @@ kubectl apply -f kube-prometheus/manifests/
 echo -e "\n##########################################################################################\n"
 
 # WATCH IT FINISH
-kubectl get pods -A -w
+kubectl get pods -A --w
 
 
 # PORT FORWARD GRAFANA/PROMETHEUS
-# kubectl -n monitoring port-forward svc/grafana 3000 --address=192.168.1.152
+# kubectl -n monitoring port-forward svc/grafana 3000 --address=192.168.1.120
 # kubectl -n monitoring port-forward svc/prometheus-k8s 9090 --address=192.168.1.120
 
 # kubectl rollout restart deployment prometheus-adapter -n monitoring

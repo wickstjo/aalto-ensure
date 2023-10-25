@@ -1,6 +1,8 @@
-# CONNECT VIA SSH, THEN CHANGE THE HOSTNAME -- baseline_machine
-# sudo nano /etc/hostname && sudo nano /etc/hosts
-# sudo reboot
+# FIND THE MACHINE'S IP ADDRESS
+# ip addr | grep 192
+
+# RENAME THE HOST MACHINE
+# sudo hostnamectl set-hostname master && sudo reboot
 
 # CREATE INSTALL FILE
 # sudo nano create_master.sh && sudo chmod +x create_master.sh && ./create_master.sh
@@ -9,11 +11,6 @@
 sudo swapoff -a
 systemctl stop firewalld
 sudo systemctl disable firewalld
-
-# INVERSE PROCESS WHEN DONE
-# sudo swapon -a
-# systemctl start firewalld
-# sudo systemctl enable firewalld
 
 # INITIALIZE THE CLUSTERS CONTROL PLANE (MASTER NODE)
 sudo kubeadm init \
@@ -39,9 +36,7 @@ echo -e "\n#####################################################################
 clear && kubectl get pods -A
 kubeadm token create --print-join-command
 
-# kubectl label nodes worker1 kubernetes.io/role=worker
-# kubectl get nodes
-# kubectl get pods -A -w
+
 
 
 

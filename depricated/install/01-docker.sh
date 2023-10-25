@@ -1,11 +1,13 @@
-# DOWNLOAD & INSTALL DOCKER
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh test-docker.sh
+# sudo nano 01-docker.sh
+
+# DOWNLOAD & INSTALL DOCKER ENGINE
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # SETUP DOCKER PERMISSIONS FOR LINUX & START THE PROCESS
 sudo usermod -aG docker $USER
 newgrp docker
-sudo systemctl start dockersudo systemctl enable --now cri-docker.socket
+sudo systemctl start docker
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
@@ -19,12 +21,8 @@ sudo tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 go version
 
-# FOR PERSISTENT GO REFERENCE, ADD EXPORT TO BASHRC
-# sudo nano ~/.bashrc
-
 # DOWNLOAD & INSTALL DOCKER CRI
 # NECESSARY FOR KUBERNETES TO USE DOCKER
-# MAKE SURE YOU HAVE 'MAKE' INSTALLED -- sudo apt install make
 git clone https://github.com/Mirantis/cri-dockerd.git
 cd cri-dockerd
 make cri-dockerd
