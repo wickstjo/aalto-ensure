@@ -34,7 +34,8 @@ class create_producer:
         )
 
         # ASYNCRONOUSLY AWAIT CONSUMER ACK BEFORE SENDING NEXT MSG
-        self.kafka_client.poll(1)
+        # self.kafka_client.poll(1)
+        self.kafka_client.flush()
 
 ###############################################################################################
 ###############################################################################################

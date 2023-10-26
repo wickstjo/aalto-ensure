@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-forwarding
+  namespace: monitoring
+spec:
+  remoteRead:
+    - url: "http://192.168.1.231:9091/read"
+    # - url: "http://192.168.1.152:9090/read"
+
+# kubectl apply -f prometheus-forward.yaml

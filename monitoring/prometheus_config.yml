@@ -1,0 +1,5 @@
+global:
+  scrape_interval: 3s # How frequently to scrape targets by default
+  evaluation_interval: 3s # How frequently to evaluate rules
+remote_read:
+  - url: "http://192.168.1.152:9090/read"
