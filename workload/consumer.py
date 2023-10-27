@@ -1,6 +1,6 @@
 # pip install confluent-kafka
 from confluent_kafka import Consumer
-import json
+import json, time
 
 ###############################################################################################
 ###############################################################################################
@@ -86,10 +86,16 @@ kafka_consumer = create_consumer(topic_name)
 def custom_deserializer(raw_bytes):
     return json.loads(raw_bytes.decode('UTF-8'))
 
+last_event = time.time()
+
 # ON EVENT, DO...
 def process_event(raw_bytes):
-    deserialized_data = custom_deserializer(raw_bytes)
-    print(deserialized_data)
+    global last_event
+    # deserialized_data = custom_deserializer(raw_bytes)
+    # print(deserialized_data)
+    current_event = time.time()
+    print(current_event - last_event)
+    last_event = current_event
 
 # START WORKLOOP
 kafka_consumer.start_consuming(process_event)

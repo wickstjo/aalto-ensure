@@ -1,6 +1,7 @@
 # pip install confluent-kafka
 from confluent_kafka import Producer
-import json
+from cooldown import generate_cooldown
+import json, time
 
 ###############################################################################################
 ###############################################################################################
@@ -49,7 +50,7 @@ def custom_serializer(data):
     return json.dumps(data).encode('UTF-8')
 
 # LOOP N TIMES
-for nth in range(5):
+for nth in range(500):
 
     # SERIALIZE MSG TO BYTES -- DOESNT NEED TO BE JSON
     serialized_data = custom_serializer({
@@ -58,3 +59,6 @@ for nth in range(5):
 
     # PUSH MESSAGE TO TOPIC
     kafka_producer.push_msg(topic_name, serialized_data)
+
+    cooldown = generate_cooldown()
+    time.sleep(cooldown)
