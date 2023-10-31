@@ -14,7 +14,7 @@ class create_producer:
     # ON LOAD, CREATE KAFKA PRODUCER
     def __init__(self):
         self.kafka_client = Producer({
-            'bootstrap.servers': 'localhost:10001,localhost:10002,localhost:10003'
+            'bootstrap.servers': '192.168.1.231:10001,192.168.1.231:10002,192.168.1.231:10003'
         })
 
     # ON CONSUMER CALLBACK, DO..

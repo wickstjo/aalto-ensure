@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import math
 import time
 
@@ -25,7 +25,7 @@ def cooldown_sim(n=500):
     print('MIN:\t', min(sin_data))
     print('MAX:\t', max(sin_data))
     
-    plt.plot([x for x in range(len(sin_data))], sin_data)
+    # plt.plot([x for x in range(len(sin_data))], sin_data)
 
 # print(generate_cooldown())
 # cooldown_sim()

@@ -5,8 +5,6 @@
 git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus
 # cd kube-prometheus
 
-sleep 3
-
 # DEPLOY IT VIA MANIFESTS
 kubectl apply --server-side -f kube-prometheus/manifests/setup
 kubectl wait --for condition=Established --all CustomResourceDefinition --namespace=monitoring

@@ -9,7 +9,7 @@ x-kafka_shared: &kafka_shared
 # SHARED KAFKA ENV
 x-kafka_env: &kafka_env
     KAFKA_AUTO_CREATE_TOPICS_ENABLE: True
-    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
     KAFKA_ZOOKEEPER_CONNECT: kafka_zookeeper:2181
     KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -34,28 +34,28 @@ services:
     kafka_broker_1:
         <<: *kafka_shared
         ports:
-            - 10001:10001
+            - 9092:9092
         environment:
             <<: *kafka_env
             KAFKA_BROKER_ID: 1
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_1:11000,PLAINTEXT_HOST://localhost:10001
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_1:9092
 
-    # SECOND BROKER
-    kafka_broker_2:
-        <<: *kafka_shared
-        ports:
-            - 10002:10002
-        environment:
-            <<: *kafka_env
-            KAFKA_BROKER_ID: 2
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_2:11000,PLAINTEXT_HOST://localhost:10002
+    # # SECOND BROKER
+    # kafka_broker_2:
+    #     <<: *kafka_shared
+    #     ports:
+    #         - 10002:10002
+    #     environment:
+    #         <<: *kafka_env
+    #         KAFKA_BROKER_ID: 2
+    #         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_2:11000
 
-    # THIRD BROKER
-    kafka_broker_3:
-        <<: *kafka_shared
-        ports:
-            - 10003:10003
-        environment:
-            <<: *kafka_env
-            KAFKA_BROKER_ID: 3
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://localhost:10003
+    # # THIRD BROKER
+    # kafka_broker_3:
+    #     <<: *kafka_shared
+    #     ports:
+    #         - 10003:10003
+    #     environment:
+    #         <<: *kafka_env
+    #         KAFKA_BROKER_ID: 3
+    #         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: my-app
@@ -14,9 +14,10 @@ spec:
     spec:
       containers:
       - name: my-container
-        image: test_image:v1  # Specify your container image here
-        ports:
-        - containerPort: 80
+        image: test_image:v1
+        imagePullPolicy: Never
+        # ports:
+        # - containerPort: 80
 ---
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
@@ -25,17 +26,17 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment  # Change this to your deployment, StatefulSet, or ReplicaSet kind as needed
+    kind: Deployment
     name: my-app
-  minReplicas: 2
-  maxReplicas: 10  # Adjust this value based on your requirements
+  minReplicas: 1
+  maxReplicas: 10
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 50  # Target average CPU utilization in percentage
+        averageUtilization: 10
 
 # kubectl apply -f headless-service.yaml
 # kubectl apply -f hpa.yaml
