@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: my-container
-        image: test_image:v1
-        imagePullPolicy: Never
-        # ports:
-        # - containerPort: 80
+        image: image: 192.168.1.231:5000/workload_consumer:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
 ---
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
@@ -40,3 +40,5 @@ spec:
 
 # kubectl apply -f headless-service.yaml
 # kubectl apply -f hpa.yaml
+
+# kubectl apply -f scalable-service.yaml
