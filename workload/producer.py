@@ -14,7 +14,7 @@ class create_producer:
     # ON LOAD, CREATE KAFKA PRODUCER
     def __init__(self):
         self.kafka_client = Producer({
-            'bootstrap.servers': '192.168.1.231:10001,192.168.1.231:10002,192.168.1.231:10003'
+            'bootstrap.servers': '192.168.1.231:9092',
         })
 
     # ON CONSUMER CALLBACK, DO..
@@ -35,8 +35,8 @@ class create_producer:
         )
 
         # ASYNCRONOUSLY AWAIT CONSUMER ACK BEFORE SENDING NEXT MSG
-        # self.kafka_client.poll(1)
-        self.kafka_client.flush()
+        self.kafka_client.poll(1)
+        # self.kafka_client.flush()
 
 ###############################################################################################
 ###############################################################################################

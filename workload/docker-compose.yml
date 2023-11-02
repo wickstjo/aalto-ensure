@@ -18,18 +18,6 @@ x-kafka_env: &kafka_env
 
 services:
 
-    # KUBERNETES IMAGE REGISTRY
-    kube_registry:
-        image: registry:2
-        environment:
-            REGISTRY_HTTP_ADDR: 0.0.0.0:5000
-            REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-            REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-        volumes:
-            - ./certs:/certs
-        ports:
-            - 5000:5000
-
     # ZOOKEEPER FOR KAFKA BROKER COORDINATION
     kafka_zookeeper:
         image: confluentinc/cp-zookeeper:7.3.0
@@ -50,7 +38,7 @@ services:
         environment:
             <<: *kafka_env
             KAFKA_BROKER_ID: 1
-            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_1:9092
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.231:9092
 
     # # SECOND BROKER
     # kafka_broker_2:
