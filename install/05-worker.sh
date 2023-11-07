@@ -10,7 +10,7 @@ sudo swapoff -a
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 
-echo -e "\n##########################################################################################\n"
+echo -e "\n#####################################\n"
 
 kubeadm join 192.168.1.152:6443 \
     --token eyly0u.xisykck7t3kj5i4e \

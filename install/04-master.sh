@@ -20,7 +20,7 @@ sudo kubeadm init \
   --cri-socket=unix:///var/run/cri-dockerd.sock \
   --pod-network-cidr=10.0.0.0/8
 
-echo -e "\n##########################################################################################\n"
+echo -e "\n#####################################\n"
 
 # MAKE THE NODE AVAILABLE
 mkdir -p $HOME/.kube
@@ -33,7 +33,7 @@ curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/ca
 kubectl apply -f calico.yaml
 kubectl get pods -A --watch
 
-echo -e "\n##########################################################################################\n"
+echo -e "\n#####################################\n"
 
 # FINALLY, PRINT CLUSTER JOIN STRING
 clear && kubectl get pods -A

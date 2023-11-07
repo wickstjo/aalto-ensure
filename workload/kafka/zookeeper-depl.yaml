@@ -6,31 +6,40 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper
+  labels:
+    app: zookeeper-service
+  name: zookeeper-service
   namespace: kafka
 spec:
+  type: NodePort
   ports:
-    - port: 2181
+    - name: zookeeper-port
+      port: 2181
+      nodePort: 30181
+      targetPort: 2181
   selector:
     app: zookeeper
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: zookeeper
   name: zookeeper
   namespace: kafka
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: zookeeper
-  replicas: 1
   template:
     metadata:
       labels:
         app: zookeeper
     spec:
       containers:
-      - name: zookeeper
-        image: zookeeper:3.6.3
-        ports:
-        - containerPort: 2181
+        - image: wurstmeister/zookeeper
+          imagePullPolicy: IfNotPresent
+          name: zookeeper
+          ports:
+            - containerPort: 2181

@@ -11,7 +11,7 @@ kubectl wait --for condition=Established --all CustomResourceDefinition --namesp
 kubectl apply -f kube-prometheus/manifests/
 # kubectl delete -f kube-prometheus/manifests/
 
-echo -e "\n##########################################################################################\n"
+echo -e "\n#####################################\n"
 
 # WATCH IT FINISH
 kubectl get pods -A -w
@@ -20,5 +20,9 @@ kubectl get pods -A -w
 # PORT FORWARD GRAFANA/PROMETHEUS
 # kubectl -n monitoring port-forward svc/grafana 3000 --address=192.168.1.152
 # kubectl -n monitoring port-forward svc/prometheus-k8s 9090 --address=192.168.1.120
+# kubectl -n kafka port-forward svc/kafka-service 9092 --address=192.168.1.152
+
+
+
 
 # kubectl rollout restart deployment prometheus-adapter -n monitoring

@@ -5,7 +5,7 @@
 git clone --depth 1 https://github.com/sustainable-computing-io/kepler
 cd kepler
 
-echo -e "\n"##########################################################################################"\n"
+echo -e "\n#####################################\n"
 
 # COMPILE & DEPLOY KEPLER MANIFESTS
 make tools

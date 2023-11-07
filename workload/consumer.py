@@ -19,7 +19,8 @@ class create_consumer:
 
         # CREATE THE CONSUMER CLIENT
         self.kafka_client = Consumer({
-            'bootstrap.servers': '192.168.1.231:9092', #,192.168.1.231:10002,192.168.1.231:10003',
+            # 'bootstrap.servers': '192.168.1.231:9092', #,192.168.1.231:10002,192.168.1.231:10003', 192.168.1.152:9092
+            'bootstrap.servers': '192.168.1.152:9092',
             'group.id': kafka_topic + '.consumers',
             'enable.auto.commit': False,
             'on_commit': self.ack_callback,
