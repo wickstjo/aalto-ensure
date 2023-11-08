@@ -1,9 +1,9 @@
 FROM python:3
 
 # SET WORKDIT & CLONE OVER NECESSARI FILES
-WORKDIR /app
+COPY . /app
 COPY requirements.txt /app/requirements.txt
-COPY consumer.py /app/consumer.py
+WORKDIR /app
 
 # INSTALL DEPENDENCIES
 RUN pip install --no-cache-dir -r requirements.txt

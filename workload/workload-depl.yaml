@@ -24,6 +24,7 @@ spec:
       containers:
       - name: workload-consumer-cont
         image: wickstjo/workload_consumer:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 

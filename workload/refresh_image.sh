@@ -1,5 +1,5 @@
 # LOGIN TO DOCKER HUB IF NECESSARY
-docker login
+# docker login
 
 # BUILD THE DOCKER IMAGE
 docker build --no-cache -t workload_consumer -f consumer.Dockerfile .

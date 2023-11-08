@@ -34,15 +34,17 @@ spec:
         - name: KAFKA_BROKER_ID
           value: "1"
         - name: KAFKA_ZOOKEEPER_CONNECT
-          value: 10.106.50.127:2181
-          #value: <ZOOKEEPER-INTERNAL-IP>:2181 # kubectl get services -n kafka
+          value: 10.107.61.46:2181
+          #value: <ZOOKEEPER-INTERNAL-IP>:2181
         - name: KAFKA_LISTENERS
           value: PLAINTEXT://:9092
         - name: KAFKA_ADVERTISED_LISTENERS
-          value: PLAINTEXT://192.168.1.152:9092
+          value: PLAINTEXT://130.233.193.117:9092
           # value: PLAINTEXT://kafka-broker:9092
         image: wurstmeister/kafka
         imagePullPolicy: IfNotPresent
         name: kafka-broker
         ports:
           - containerPort: 9092
+
+# kubectl get services -n kafka
