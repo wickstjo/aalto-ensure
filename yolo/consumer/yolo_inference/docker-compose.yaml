@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  yolo-consumer-1:
+    build: .
+    network_mode: "host"
+    command:
+      - '-s localhost:10001,localhost:10002,localhost:10003'
+      - '-m custom-20k'
+  yolo-consumer-2:
+    build: .
+    network_mode: "host"
+    command:
+      - '-s localhost:10001,localhost:10002,localhost:10003'
+      - '-m custom-300k'
+  yolo-consumer-3:
+    build: .
+    network_mode: "host"
+    command:
+      - '-s localhost:10001,localhost:10002,localhost:10003'
+      - '-m custom-750k'
+

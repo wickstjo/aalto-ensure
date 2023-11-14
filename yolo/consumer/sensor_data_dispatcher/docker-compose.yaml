@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  sensor-data-service:
+    build: .
+    network_mode: "host"
+    command:
+      - '-s localhost:10001,localhost:10002,localhost:10003'

@@ -1,0 +1,15 @@
+# IDE specific files
+.idea
+
+# Datasets
+*.hdf5
+
+# Cached yolo models
+*.pt
+
+# Python
+*.pyc
+
+# Python builds
+build/
+*.spec
