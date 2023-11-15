@@ -12,23 +12,6 @@ from kafka_helpers import KafkaToQueueProcessor
 from collections import namedtuple
 from multiprocessing import Queue  # TODO: use multiprocessing queue?
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "-s",
-    "--server",
-    type=str,
-    default="localhost:10001,localhost:10002,localhost:10003",
-    help="Kafka bootstrap server and port",
-)
-
-parser.add_argument(
-    "--qos",
-    type=int,
-    default=1000,
-    help="Target processing time (ms) for each received image. "
-         "If avg processing time increases above this value, a smaller model is chosen.",
-)
-
 ModelSpec = namedtuple("ModelSpec", "name expected_processing_time")
 # available_models = [ModelSpec("yolov5n", 50),
 #                     ModelSpec("yolov5s", 100),
@@ -42,9 +25,6 @@ available_models = [ModelSpec("custom-20k", 10),
                     # ModelSpec("yolov5m", 150),
                     ]
 
-
-args = parser.parse_args()
-bootstrap_servers = args.server
 
 class Dispatcher:
     """

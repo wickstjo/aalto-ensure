@@ -1,0 +1,5 @@
+confluent-kafka
+Pillow
+torch
+opencv-python
+ultralytics
