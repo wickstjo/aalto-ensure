@@ -1,6 +1,7 @@
-import bezier
+import bezier, datetime
 import numpy as np
 import matplotlib.pyplot as plt
+import json, time, math, os
 
 class DayNightCycle:
     def __init__(self):
@@ -54,10 +55,35 @@ class DayNightCycle:
         plt.xlim([0, 25])
         plt.ylim([0, 110])
 
+def get_formatted_time():
+    now = datetime.datetime.now()
+    formatted_date = now.strftime("%A, %B %d, %Y %I:%M:%S %p")
+    return formatted_date
 
-if __name__ == "__main__":
-    cycle = DayNightCycle()
-    cycle.plot()
-    plt.show()
-    for i in range(25):
-        cycle.evaluate(i)
+# DESERIALIZE BYTES DATA -- INVERSE OF THE PRODUCERS SERIALIZER
+def custom_deserializer(raw_bytes):
+    return json.loads(raw_bytes.decode('UTF-8'))
+
+# CUSTOM DATA => BYTES SERIALIZED -- INVERSE OF THE CONSUMERS DESERIALIZER
+def custom_serializer(data):
+    return json.dumps(data).encode('UTF-8')
+
+# GET ACTION COOLDOWN BASED ON TIMESTAMP+SINE WAVE
+def generate_cooldown(bonus=0):
+
+    # STATIC VARS
+    frequency = 0.5
+    oscillation = 4
+    buffer = 0.3
+
+    # FETCH SIN-WAVE COOLDOWN
+    return (0.2 * math.sin((time.time() + bonus) * frequency * math.pi / 60) + buffer) * oscillation
+
+# CHECK WHETHER RESOURCE EXISTS
+def resource_exists(path):
+    if not os.path.exists(path):
+        print(f"RESOURCE NOT FOUND ({path})")
+        return False
+    
+    print(f"RESOURCE FOUND ({path})")
+    return True

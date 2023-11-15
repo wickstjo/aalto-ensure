@@ -9,7 +9,7 @@ def producer_args():
         "-d",
         "--dataset",
         type=str,
-        default="./datasets/mini.hdf5",
+        default="mini",
         help="Path to the dataset. You can give multiple paths separated by space.",
     )
 
@@ -92,16 +92,8 @@ def consumer_args():
         "-m",
         "--model",
         type=str,
-        default="custom-20k",
+        default="custom-750k",
         help="What type of model the consumer should use",
-    )
-
-    parser.add_argument(
-        "--qos",
-        type=int,
-        default=1000,
-        help="Target processing time (ms) for each received image. "
-            "If avg processing time increases above this value, a smaller model is chosen.",
     )
 
     # FINALLY, RETURN THE PARSED ARGS

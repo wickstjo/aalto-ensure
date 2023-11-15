@@ -1,4 +1,0 @@
-h5py
-confluent-kafka
-bezier
-matplotlib

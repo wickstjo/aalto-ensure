@@ -1,4 +1,6 @@
 from confluent_kafka import Consumer, Producer
+from IPython.display import clear_output
+import json
 
 # GOOD DOCS FOR CONSUMER API
     # https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#consumer
@@ -54,7 +56,7 @@ class create_consumer:
             'group.id': kafka_topic + '.consumers',
             'enable.auto.commit': False,
             'on_commit': self.ack_callback,
-            'auto.offset.reset': 'earliest'
+            'auto.offset.reset': 'latest' # earliest latest
         })
 
     # AUTO CALLBACK WHEN CONSUMER COMMITS MESSAGE
@@ -94,6 +96,7 @@ class create_consumer:
                     # AT LEAST ONCE -- DELIVERY GUARANTEE
                     if self.delivery_guarantee == 'at_least_once':
                         self.kafka_client.commit(msg, asynchronous=True)
+
 
                 # TERMINATE MANUALLY
                 except KeyboardInterrupt:

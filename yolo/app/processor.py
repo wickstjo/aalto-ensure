@@ -1,22 +1,18 @@
 from utilz.args_utils import consumer_args
 from utilz.kafka_utils import create_consumer, create_producer
-from utilz.misc import custom_serializer
-import os, io, torch
+from utilz.misc import custom_serializer, resource_exists
 from PIL import Image
 from numpy import asarray
+import io, torch
 
 def run():
 
     # PARSE THE PYTHON ARGS
     args = consumer_args()
-    print(args)
 
-    # MAKE SURE THE DEFINED MODEL EXISTS
-    if not os.path.exists(f'./models/{args.model}.pt'):
-        print(f"MODEL NOT FOUND ({args.model})")
+    # MAKE SURE THE MODEL FILE EXISTS
+    if not resource_exists(f'./models/{args.model}.pt'):
         return
-    else:
-        print(f"MODEL FOUND ({args.model})")
 
     # PROPERLY LOAD THE YOLO MODEL
     yolo = torch.hub.load('ultralytics/yolov5', "custom", path=f'./models/{args.model}.pt')
@@ -36,7 +32,12 @@ def run():
 
         # PUSH RESULTS INTO VALIDATION TOPIC
         kafka_producer.push_msg('yolo_output', custom_serializer({
-            'timestamps': results.t,
+            'timestamps': {
+                'pre': results.t[0],
+                'inf': results.t[1],
+                'post': results.t[2],
+            },
+            'model': args.model,
             'dimensions': results.s
         }))
 

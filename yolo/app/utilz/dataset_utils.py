@@ -20,13 +20,8 @@ def parse_dataset(args, buffer: Queue):
     The buffer length can be limited to avoid issues with too high memory usage.
     """
 
-    # MAKE SURE THE DATASET EXISTS
-    if not os.path.exists(args.dataset):
-        print(f"DATASET NOT FOUND IN `{args.dataset}`")
-        return False
-
     # EXTRACT DATASET COMPONENTS
-    dataset = h5py.File(args.dataset, 'r')
+    dataset = h5py.File(f'./datasets/{args.dataset}.hdf5', 'r')
     activity = dataset['is_enabled']
     sensors = dataset['sensors']
     total_sensors = len(sensors.keys())
@@ -55,12 +50,12 @@ def parse_dataset(args, buffer: Queue):
 
         # CREATE FRAME STRUCT
         frame_wrapper = Frame(
-            frame_number=frame, 
-            max_frames=n_frames, 
-            data=frame_data, 
+            frame_number=frame,
+            max_frames=n_frames,
+            data=frame_data,
             total_sensors=total_sensors
         )
-        
+
         # PUSH IT TO THE BUFFER -- WHEN THERE IS SPACE
         buffer.put(frame_wrapper, block=True)
 
