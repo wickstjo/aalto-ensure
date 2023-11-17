@@ -4,6 +4,7 @@ from utilz.misc import generate_cooldown, resource_exists
 from utilz.kafka_utils import create_producer
 from multiprocessing import Queue
 from queue import Empty
+from threading import Thread
 import time
 
 def run():
@@ -12,7 +13,7 @@ def run():
     args = producer_args()
 
     # START LOADING DATASET INTO QUEUE BUFFER
-    queue = Queue(maxsize=args.queue)
+    queue = Queue(maxsize=args.buffer)
 
     # MAKE SURE THE HDF5 DATASET EXISTS
     if not resource_exists(f'./datasets/{args.dataset}.hdf5'):
@@ -24,24 +25,28 @@ def run():
     # CREATE KAFKA PRODUCER
     kafka_producer = create_producer(args.kafka)
 
+    def container(item):
+
+        # PROCESS EACH FRAME'S IMG MATRIX
+        for _, frame in item.data.items():
+
+            # PUSH IT TO KAFKA
+            kafka_producer.push_msg('yolo_input', frame.data.tobytes())
+
+        # GENERATE COOLDOWN BASED ON TIMESTAMP & SINEWAVE, THEN WAIT
+        # cooldown = generate_cooldown()
+        # time.sleep(cooldown)
+
+        time.sleep(0.2)
+
     # START ITERATING THROUGH BUFFER CONTENT
     while queue._notempty:
         try:
-
             # SELECT NEXT BUFFER ITEM
             item = queue.get(block=True, timeout=5)
 
-            # PROCESS EACH FRAME'S IMG MATRIX
-            for _, frame in item.data.items():
-
-                # PUSH IT TO KAFKA
-                kafka_producer.push_msg('yolo_input', frame.data.tobytes())
-
-            # GENERATE COOLDOWN BASED ON TIMESTAMP & SINEWAVE, THEN WAIT
-            # cooldown = generate_cooldown()
-            # time.sleep(cooldown)
-
-            time.sleep(0.2)
+            thread = Thread(target=container, args=(item,))
+            thread.start()
 
         # TERMINATE MANUALLY
         except KeyboardInterrupt:

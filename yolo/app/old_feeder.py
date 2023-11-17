@@ -13,7 +13,7 @@ def run():
     args = producer_args()
 
     # START LOADING DATASET INTO QUUEUE BUFFER
-    queue = Queue(maxsize=args.queue)
+    queue = Queue(maxsize=args.buffer)
 
     # MAKE SURE THE HDF5 DATASET EXISTS
     if not resource_exists(f'./datasets/{args.dataset}.hdf5'):

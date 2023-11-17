@@ -1,0 +1,11 @@
+kepler_node_package_joules_total
+
+kepler_node_package_joules_total{instance="worker2"}
+
+irate(kepler_node_package_joules_total{instance="worker2"}[30s])
+
+
+sum(kube_pod_info{node="worker2"})
+count(kube_pod_info{node="worker2"})
+
+irate(kepler_container_package_joules_total{pod_name="yolo-consumer-ddc9967cb-r5p5q"}[10s])

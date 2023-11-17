@@ -18,9 +18,9 @@ kubectl get pods -A -w
 
 
 # PORT FORWARD GRAFANA/PROMETHEUS
-# kubectl -n monitoring port-forward svc/grafana 3000 --address=192.168.1.152
-# kubectl -n monitoring port-forward svc/prometheus-k8s 9090 --address=192.168.1.120
-# kubectl -n kafka port-forward svc/kafka-service 9092 --address=192.168.1.152
+# kubectl -n monitoring port-forward svc/grafana 3000 --address=130.233.193.117
+# kubectl -n monitoring port-forward svc/prometheus-k8s 9090 --address=130.233.193.117
+# kubectl -n kafka port-forward svc/kafka-service 9092 --address=130.233.193.117
 
 
 

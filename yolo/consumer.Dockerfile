@@ -6,7 +6,13 @@ COPY ./requirements.txt /app/requirements.txt
 WORKDIR /app
 
 # INSTALL DEPENDENCIES
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6 wget -y
 RUN pip install --no-cache-dir -r requirements.txt
+
+# DOWNLOAD & SET YOLO ZIP
+RUN mkdir -p /root/.cache/torch/hub/
+RUN wget -O /root/.cache/torch/hub/master.zip https://github.com/ultralytics/yolov5/zipball/master
 
 # RUN CONSUMER
 CMD ["python", "processor.py"]
@@ -14,11 +20,5 @@ CMD ["python", "processor.py"]
 # docker build --no-cache -t workload_consumer -f consumer.Dockerfile .
 # docker run workload_consumer
 
-# docker save -o workload_consumer.tar workload_consumer:latest
-# docker load -i workload_consumer.tar
-
-# docker run -p 5000:5000 --name registry registry:2
-# docker tag workload_consumer:latest 192.168.1.231:5000/workload_consumer:latest
-# docker push 192.168.1.231:5000/workload_consumer:latest
-
-# image: 192.168.1.231:5000/workload_consumer:latest
+# docker tag workload_consumer:latest wickstjo/workload_consumer:latest
+# docker push wickstjo/workload_consumer:latest

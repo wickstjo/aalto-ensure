@@ -1,6 +1,4 @@
 from confluent_kafka import Consumer, Producer
-from IPython.display import clear_output
-import json
 
 # GOOD DOCS FOR CONSUMER API
     # https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#consumer
@@ -14,7 +12,8 @@ class create_producer:
     # ON LOAD, CREATE KAFKA PRODUCER
     def __init__(self, kafka_servers):
         self.kafka_client = Producer({
-            'bootstrap.servers': kafka_servers
+            # 'bootstrap.servers': '130.233.193.117:9092',
+            'bootstrap.servers': kafka_servers,
         })
 
     # ON CONSUMER CALLBACK, DO..
@@ -52,6 +51,7 @@ class create_consumer:
 
         # CREATE THE CONSUMER CLIENT
         self.kafka_client = Consumer({
+            # 'bootstrap.servers': '130.233.193.117:9092',
             'bootstrap.servers': kafka_servers,
             'group.id': kafka_topic + '.consumers',
             'enable.auto.commit': False,

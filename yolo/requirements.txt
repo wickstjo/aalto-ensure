@@ -3,3 +3,9 @@ Pillow
 torch
 opencv-python
 ultralytics
+bezier
+
+gitpython
+gitdb
+smmap
+setuptools==68.2.2
