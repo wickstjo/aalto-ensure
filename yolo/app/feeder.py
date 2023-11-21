@@ -25,6 +25,8 @@ def run():
     # CREATE KAFKA PRODUCER
     kafka_producer = create_producer(args.kafka)
 
+    threads = []
+
     def container(item):
 
         # PROCESS EACH FRAME'S IMG MATRIX
@@ -37,7 +39,7 @@ def run():
         # cooldown = generate_cooldown()
         # time.sleep(cooldown)
 
-        time.sleep(0.2)
+        # time.sleep(0.2)
 
     # START ITERATING THROUGH BUFFER CONTENT
     while queue._notempty:
@@ -46,6 +48,7 @@ def run():
             item = queue.get(block=True, timeout=5)
 
             thread = Thread(target=container, args=(item,))
+            threads.append(thread)
             thread.start()
 
         # TERMINATE MANUALLY
@@ -56,7 +59,9 @@ def run():
 
         # DIE PEACEFULLY WHEN QUEUE IS EMPTY
         except Empty:
+            [thread.join() for thread in threads]
             print('QUEUE WAS EMPTY FOR 5+ SECONDS, DYING..')
+            print('THREADS DONE..')
             break
 
         # SILENTLY DEAL WITH OTHER ERRORS

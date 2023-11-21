@@ -25,12 +25,18 @@ spec:
         image: wickstjo/workload_consumer:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
-        # resources:
-        #   limits:
-        #     cpu: 500m
-        #   requests:
-        #     cpu: 200m
+          - containerPort: 80
+
+        # THORTTLE CONTAINERS OR NAH?
+        # FEW LARGER PROCESSES, OR MANY SMALL ONES?
+        # TECHNICALLY, THE END RESULT SHOULD BE THE SAME WITH KAFKA ROUTING
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+
+            # SHOULD BE SMALLER THAN LIMIT?
+            cpu: 1000m
 ---
 apiVersion: v1
 kind: Service
@@ -55,29 +61,26 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: yolo-consumer
+
+  # DETERMINE MAX REPLICAS BASED ON THOTTLED RESOURCES
+  # 1 CORE PER POD, 20 PODS TOTAL = MAX 20 REPLICAS
   minReplicas: 1
-  maxReplicas: 10
+  maxReplicas: 20
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 25
+
+        # HIGH PERCENTAGE = SCALE SLOWER
+        # LOW PERCENTAGE = SCALE FASTER
+        averageUtilization: 30
+
+  # DEPENDENT ON METRICS SERVER INTERVAL (>=10s)
+  # ADD 10-20% BUFFER TO MAKE SURE METRICS SERVER IS FRESH?
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 2  # optional, adjust as needed
+      stabilizationWindowSeconds: 10
     scaleUp:
-      stabilizationWindowSeconds: 2  # optional, adjust as needed
-# status:
-#   observedGeneration: 1
-#   lastScaleTime: <some-time>
-#   currentReplicas: 1
-#   desiredReplicas: 1
-#   currentMetrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       current:
-#         averageUtilization: 0
-#         averageValue: 0
+      stabilizationWindowSeconds: 10

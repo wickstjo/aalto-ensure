@@ -23,6 +23,9 @@ kubectl get pods -A -w
 # kubectl -n kafka port-forward svc/kafka-service 9092 --address=130.233.193.117
 
 
+# kubectl -n kafka port-forward svc/kafka-service 1099 --address=130.233.193.117
+
+
 
 
 # kubectl rollout restart deployment prometheus-adapter -n monitoring
