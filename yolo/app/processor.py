@@ -1,6 +1,6 @@
 from utilz.args_utils import consumer_args
 from utilz.kafka_utils import create_consumer, create_producer
-from utilz.misc import custom_serializer, resource_exists
+from utilz.misc import custom_serializer, resource_exists, log, create_lock
 from PIL import Image
 from numpy import asarray
 import io, torch
@@ -18,14 +18,19 @@ def run():
     # PROPERLY LOAD THE YOLO MODEL
     yolo = torch.hub.load('ultralytics/yolov5', "custom", path=f'./models/{args.model}.pt', trust_repo=True, force_reload=True)
     device = yolo.parameters().__next__().device
-    print(f"LOADED MODEL ({args.model}) ON DEVICE ({device})")
+    log(f"LOADED MODEL ({args.model}) ON DEVICE ({device})")
 
     # CREATE KAFKA CLIENTS
     kafka_consumer = create_consumer(args.kafka, 'yolo_input')
     kafka_producer = create_producer(args.kafka)
 
-    # HANDLE EVENT WITH THREAD
-    def container(img_bytes):
+    # CONSUMER THREAD STUFF
+    thread_pool = int(args.threads)
+    thread_lock = create_lock()
+    threads = []
+
+    # WHAT THE THREAD DOES WITH POLLED EVENTS
+    def process_event(img_bytes):
 
         # CONVERT INPUT BYTES TO IMAGE & GIVE IT TO YOLO
         img = Image.open(io.BytesIO(img_bytes))
@@ -42,12 +47,21 @@ def run():
             'dimensions': results.s
         }))
 
-    # ON EVENT, DO..
-    def process_event(img_bytes):
-        thread = Thread(target=container, args=(img_bytes,))
-        thread.start()
+    # CREATE & START WORKER THREADS
+    try:
+        log(f'STARTING CONSUMER THREAD POOL OF SIZE: {thread_pool}')
 
-    # FINALLY, START CONSUMING EVENTS
-    kafka_consumer.start_consuming(process_event)
+        for nth in range(thread_pool):
+            thread = Thread(target=kafka_consumer.poll_next, args=(nth+1, thread_lock, process_event,))
+            threads.append(thread)
+            thread.start()
+
+        # WAIT FOR EVERY THREAD TO FINISH (MUST BE MANUALLY BY CANCELING LOCK)
+        [[thread.join() for thread in threads]]
+
+    # TERMINATE MAIN PROCESS AND KILL HELPER THREADS
+    except KeyboardInterrupt:
+        thread_lock.kill()
+        log('WORKER MANUALLY KILLED..', True)
 
 run()

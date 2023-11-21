@@ -1,5 +1,7 @@
 import argparse
+from .misc import log
 
+# DATA FEEDER
 def producer_args():
 
     # INITIALIZE THE PARSER
@@ -72,9 +74,10 @@ def producer_args():
     )
 
     # FINALLY, RETURN THE PARSED ARGS
-    print('PRODUCER ARGS LOADED')
+    log('PRODUCER ARGS LOADED')
     return parser.parse_args()
 
+# YOLO CONSUMER
 def consumer_args():
 
     # INITIALIZE THE PARSER
@@ -89,6 +92,15 @@ def consumer_args():
     )
 
     parser.add_argument(
+        "-t",
+        "--threads",
+        type=int,
+        default=3,
+        help="Number of worker threads that poll kafka & do yolo processing",
+    )
+
+
+    parser.add_argument(
         "-m",
         "--model",
         type=str,
@@ -97,5 +109,5 @@ def consumer_args():
     )
 
     # FINALLY, RETURN THE PARSED ARGS
-    print('CONSUMER ARGS LOADED')
+    log('CONSUMER ARGS LOADED')
     return parser.parse_args()

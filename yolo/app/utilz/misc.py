@@ -2,6 +2,7 @@ import bezier, datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import json, time, math, os
+from datetime import datetime
 
 class DayNightCycle:
     def __init__(self):
@@ -82,8 +83,28 @@ def generate_cooldown(bonus=0):
 # CHECK WHETHER RESOURCE EXISTS
 def resource_exists(path):
     if not os.path.exists(path):
-        print(f"RESOURCE NOT FOUND ({path})")
+        log(f"RESOURCE NOT FOUND ({path})")
         return False
     
-    print(f"RESOURCE FOUND ({path})")
+    log(f"RESOURCE FOUND ({path})")
     return True
+
+# TIMESTAMPED PRINT STATEMENT
+def log(msg, with_break=False):
+    now = datetime.now()
+    timestamp = now.strftime("%H:%M:%S.%f")[:-3]  # Truncate microseconds to milliseconds
+    if with_break:
+        print(f'\n[{timestamp}]\t {msg}', flush=True)
+    else:
+        print(f'[{timestamp}]\t {msg}', flush=True)
+
+# THREAD LOCK TO KILL HELPER THREADS
+class create_lock:
+    def __init__(self):
+        self.lock = True
+    
+    def is_active(self):
+        return self.lock
+    
+    def kill(self):
+        self.lock = False
