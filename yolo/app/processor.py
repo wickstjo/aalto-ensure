@@ -1,33 +1,47 @@
-from utilz.args_utils import consumer_args
 from utilz.kafka_utils import create_consumer, create_producer
 from utilz.misc import custom_serializer, resource_exists, log, create_lock
 from PIL import Image
 from numpy import asarray
 import io, torch
 from threading import Thread
+import socket
 
 def run():
 
-    # PARSE THE PYTHON ARGS
-    args = consumer_args()
+    # DYNAMIC ARGUMENTS FOR YOLO PROCESSING
+    args = {
+        'model': 'custom-750k',
+        'worker_threads': 3,
+        'kafka': {
+            'input_topic': 'yolo_input',
+            'output_topic': 'yolo_output',
+        }
+    }
+
+    ########################################################################################
+    ########################################################################################
 
     # MAKE SURE THE MODEL FILE EXISTS
-    if not resource_exists(f'./models/{args.model}.pt'):
+    if not resource_exists(f'./models/{args["model"]}.pt'):
         return
 
     # PROPERLY LOAD THE YOLO MODEL
-    yolo = torch.hub.load('ultralytics/yolov5', "custom", path=f'./models/{args.model}.pt', trust_repo=True, force_reload=True)
+    yolo = torch.hub.load('ultralytics/yolov5', "custom", path=f'./models/{args["model"]}.pt', trust_repo=True, force_reload=True)
     device = yolo.parameters().__next__().device
-    log(f"LOADED MODEL ({args.model}) ON DEVICE ({device})")
+    log(f'LOADED MODEL ({args["model"]}) ON DEVICE ({device})')
 
     # CREATE KAFKA CLIENTS
-    kafka_consumer = create_consumer(args.kafka, 'yolo_input')
-    kafka_producer = create_producer(args.kafka)
+    kafka_consumer = create_consumer(args['kafka']['input_topic'])
+    kafka_producer = create_producer()
 
     # CONSUMER THREAD STUFF
-    thread_pool = int(args.threads)
+    thread_pool = args['worker_threads']
     thread_lock = create_lock()
     threads = []
+
+    # TRACK WHICH MACHINE IS DOING THE PROCESSING
+    hostname = socket.gethostname()
+    ip_addr = socket.gethostbyname(hostname)
 
     # WHAT THE THREAD DOES WITH POLLED EVENTS
     def process_event(img_bytes):
@@ -37,13 +51,14 @@ def run():
         results = yolo.forward(asarray(img))
 
         # PUSH RESULTS INTO VALIDATION TOPIC
-        kafka_producer.push_msg('yolo_output', custom_serializer({
+        kafka_producer.push_msg(args['kafka']['output_topic'], custom_serializer({
             'timestamps': {
                 'pre': results.t[0],
                 'inf': results.t[1],
                 'post': results.t[2],
             },
-            'model': args.model,
+            'source': ip_addr,
+            'model': args['model'],
             'dimensions': results.s
         }))
 

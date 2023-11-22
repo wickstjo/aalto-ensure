@@ -84,7 +84,7 @@ def consumer_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "-s",
+        "-k",
         "--kafka",
         type=str,
         default="localhost:10001,localhost:10002,localhost:10003",

@@ -21,7 +21,7 @@ def parse_dataset(args, buffer: Queue):
     """
 
     # EXTRACT DATASET COMPONENTS
-    dataset = h5py.File(f'./datasets/{args.dataset}.hdf5', 'r')
+    dataset = h5py.File(f'./datasets/{args["name"]}.hdf5', 'r')
     activity = dataset['is_enabled']
     sensors = dataset['sensors']
     total_sensors = len(sensors.keys())
@@ -32,8 +32,8 @@ def parse_dataset(args, buffer: Queue):
     sensor_names = list(dataset["sensors"].keys())
     sensor_data_iters = {key: iter(sensors[key]) for key in sensor_names}
 
-    if args.max_frames > 0:
-        n_frames = min(n_frames, args.max_frames)
+    if args['max_frames'] > 0:
+        n_frames = min(n_frames, args['max_frames'])
 
     # PROCESS ALL FRAMES
     for frame in range(n_frames):

@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.8
 
 # SET WORKDIT & CLONE OVER NECESSARI FILES
 COPY ./app /app

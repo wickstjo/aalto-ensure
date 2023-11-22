@@ -30,13 +30,13 @@ spec:
         # THORTTLE CONTAINERS OR NAH?
         # FEW LARGER PROCESSES, OR MANY SMALL ONES?
         # TECHNICALLY, THE END RESULT SHOULD BE THE SAME WITH KAFKA ROUTING
-        resources:
-          limits:
-            cpu: 1000m
-          requests:
+        # resources:
+        #   limits:
+        #     cpu: 1000m
+        #   requests:
 
-            # SHOULD BE SMALLER THAN LIMIT?
-            cpu: 1000m
+        #     # SHOULD BE SMALLER THAN LIMIT?
+        #     cpu: 1000m
 ---
 apiVersion: v1
 kind: Service

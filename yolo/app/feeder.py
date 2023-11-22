@@ -1,6 +1,5 @@
-from utilz.args_utils import producer_args
 from utilz.dataset_utils import parse_dataset
-from utilz.misc import generate_cooldown, resource_exists
+from utilz.misc import resource_exists, log, create_lock
 from utilz.kafka_utils import create_producer
 from multiprocessing import Queue
 from queue import Empty
@@ -9,65 +8,67 @@ import time
 
 def run():
 
-    # PARSE THE PYTHON ARGS
-    args = producer_args()
+    # DYNAMIC ARGUMENTS
+    args = {
+        'dataset': {
+            'name': 'mini',
+            'max_frames': -1,
+            'max_vehicles': -1,
+            'fps': 5,
+            'repeat': 1,
+        },
+        'thread_pool': 3,
+        'queue_buffer': 1000,
+        'frame_cooldown': 0.2,
+    }
 
-    # START LOADING DATASET INTO QUEUE BUFFER
-    queue = Queue(maxsize=args.buffer)
+    ########################################################################################
+    ########################################################################################
 
     # MAKE SURE THE HDF5 DATASET EXISTS
-    if not resource_exists(f'./datasets/{args.dataset}.hdf5'):
+    if not resource_exists(f'./datasets/{args["dataset"]["name"]}.hdf5'):
         return
 
-    # IT DOES: GRADUALLY LOAD THE DATASET INTO THE BUFFER
-    parse_dataset(args, queue)
+    # START GRADUALLY LOADING DATASET INTO A QUEUE BUFFER
+    queue = Queue(maxsize=args['queue_buffer'])
+    parse_dataset(args['dataset'], queue)
 
     # CREATE KAFKA PRODUCER
-    kafka_producer = create_producer(args.kafka)
-
+    kafka_producer = create_producer()
+    thread_lock = create_lock()
     threads = []
 
-    def container(item):
+    # PRODUCER THREAD WORK LOOP
+    def thread_work(nth_thread, lock):
+        while queue._notempty and lock.is_active():
 
-        # PROCESS EACH FRAME'S IMG MATRIX
-        for _, frame in item.data.items():
-
-            # PUSH IT TO KAFKA
-            kafka_producer.push_msg('yolo_input', frame.data.tobytes())
-
-        # GENERATE COOLDOWN BASED ON TIMESTAMP & SINEWAVE, THEN WAIT
-        # cooldown = generate_cooldown()
-        # time.sleep(cooldown)
-
-        # time.sleep(0.2)
-
-    # START ITERATING THROUGH BUFFER CONTENT
-    while queue._notempty:
-        try:
             # SELECT NEXT BUFFER ITEM
             item = queue.get(block=True, timeout=5)
 
-            thread = Thread(target=container, args=(item,))
+            # PROCESS EACH FRAME'S IMG MATRIX
+            for _, frame in item.data.items():
+                if lock.is_active():
+
+                    # PUSH IT TO KAFKA
+                    kafka_producer.push_msg('yolo_input', frame.data.tobytes())
+                    time.sleep(args['frame_cooldown'])
+
+    # CREATE & START WORKER THREADS
+    try:
+        log(f'STARTING PRODUCER THREAD POOL ({args["thread_pool"]})')
+
+        for nth in range(args['thread_pool']):
+            thread = Thread(target=thread_work, args=(nth+1, thread_lock))
             threads.append(thread)
             thread.start()
 
-        # TERMINATE MANUALLY
-        except KeyboardInterrupt:
-            queue.cancel_join_thread()
-            print('FEEDER MANUALLY KILLED..')
-            break
+        # WAIT FOR EVERY THREAD TO FINISH (MUST BE MANUALLY BY CANCELING LOCK)
+        [[thread.join() for thread in threads]]
 
-        # DIE PEACEFULLY WHEN QUEUE IS EMPTY
-        except Empty:
-            [thread.join() for thread in threads]
-            print('QUEUE WAS EMPTY FOR 5+ SECONDS, DYING..')
-            print('THREADS DONE..')
-            break
-
-        # SILENTLY DEAL WITH OTHER ERRORS
-        except Exception as error:
-            queue.cancel_join_thread()
-            print('FEEDER ERROR', error)
-            break
+    # TERMINATE MAIN PROCESS AND KILL HELPER THREADS
+    except KeyboardInterrupt:
+        thread_lock.kill()
+        queue.cancel_join_thread()
+        log('WORKER & THREADS MANUALLY KILLED..', True)
 
 run()

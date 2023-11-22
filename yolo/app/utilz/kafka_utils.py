@@ -1,5 +1,6 @@
 from confluent_kafka import Consumer, Producer
 from utilz.misc import log
+import sys
 
 # GOOD DOCS FOR CONSUMER API
     # https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#consumer
@@ -8,13 +9,19 @@ from utilz.misc import log
 ###################################################################################################
 ###################################################################################################
 
+# KAFKA_SERVERS = '130.233.193.117:10001,130.233.193.117:10002,130.233.193.117:10003'
+KAFKA_SERVERS = 'localhost:10001,localhost:10002,localhost:10003'
+VERBOSE = False
+
+###################################################################################################
+###################################################################################################
+
 class create_producer:
 
     # ON LOAD, CREATE KAFKA PRODUCER
-    def __init__(self, kafka_servers):
+    def __init__(self):
         self.kafka_client = Producer({
-            # 'bootstrap.servers': '130.233.193.117:9092',
-            'bootstrap.servers': kafka_servers,
+            'bootstrap.servers': KAFKA_SERVERS,
         })
 
     # ON CONSUMER CALLBACK, DO..
@@ -32,7 +39,7 @@ class create_producer:
             on_delivery=self.ack_callback,
         )
 
-        log(f'MESSAGE PUSHED ({topic_name})')
+        if VERBOSE: log(f'MESSAGE PUSHED ({topic_name})')
 
         # ASYNCRONOUSLY AWAIT CONSUMER ACK BEFORE SENDING NEXT MSG
         self.kafka_client.poll(1)
@@ -44,7 +51,7 @@ class create_producer:
 class create_consumer:
 
     # ON LOAD, CREATE KAFKA CONSUMER CLIENT
-    def __init__(self, kafka_servers, kafka_topic):
+    def __init__(self, kafka_topic):
 
         # SET STATIC CONSUMPTION CONFIGS
         self.kafka_topic = kafka_topic
@@ -52,8 +59,7 @@ class create_consumer:
 
         # CREATE THE CONSUMER CLIENT
         self.kafka_client = Consumer({
-            # 'bootstrap.servers': '130.233.193.117:9092',
-            'bootstrap.servers': kafka_servers,
+            'bootstrap.servers': KAFKA_SERVERS,
             'group.id': kafka_topic + '.consumers',
             'enable.auto.commit': False,
             'on_commit': self.ack_callback,
@@ -63,57 +69,15 @@ class create_consumer:
         # SUBSCRIBE TO THE KAFKA TOPIC
         self.kafka_client.subscribe([self.kafka_topic])
 
+    # WHEN CLASS DIES, KILL THE KAFKA CLIENT
+    def __del__(self):
+        log('KAFKA CLIENT CLOSED')
+        self.kafka_client.close()
+
     # AUTO CALLBACK WHEN CONSUMER COMMITS MESSAGE
     def ack_callback(self, error, partitions):
         if error:
             return print('ACK ERROR', error)
-
-    # # START CONSUMING TOPIC EVENTS
-    # def start_consuming(self, on_message):
-
-    #         # CREATE KAFKA CONSUMER & SUBSCRIBE TO TOPIC FEED
-    #         self.kafka_client.subscribe([self.kafka_topic])
-    #         log('CONSUMER STARTED..')
-
-    #         # EVENT LOOP
-    #         while True:
-    #             try:
-    #                 # POLL NEXT MESSAGE
-    #                 msg = self.kafka_client.poll(1)
-
-    #                 # NULL MESSAGE -- SKIP
-    #                 if msg is None: continue
-
-    #                 # CATCH ERRORS
-    #                 if msg.error():
-    #                     print('FAULTY MESSAGE RECEIVED', msg.error())
-    #                     continue
-
-    #                 # AT MOST ONCE -- DELIVERY GUARANTEE
-    #                 if self.delivery_guarantee == 'at_most_once':
-    #                     self.kafka_client.commit(msg, asynchronous=True)
-
-    #                 # HANDLE THE EVENT VIA CALLBACK FUNC
-    #                 print('MESSAGE RECEIVED')
-    #                 on_message(msg.value())
-
-    #                 # AT LEAST ONCE -- DELIVERY GUARANTEE
-    #                 if self.delivery_guarantee == 'at_least_once':
-    #                     self.kafka_client.commit(msg, asynchronous=True)
-
-
-    #             # TERMINATE MANUALLY
-    #             except KeyboardInterrupt:
-    #                 print('CONSUMER MANUALLY KILLED..')
-    #                 break
-
-    #             # SILENTLY DEAL WITH OTHER ERRORS
-    #             except Exception as error:
-    #                 print('CONSUMER ERROR', error)
-    #                 continue
-
-    #         # TERMINATE KAFKA CONSUMER
-    #         self.kafka_client.close()
 
     # START CONSUMING TOPIC EVENTS
     def poll_next(self, nth_thread, thread_lock, on_message):
@@ -138,9 +102,9 @@ class create_consumer:
                 self.kafka_client.commit(msg, asynchronous=True)
 
                 # HANDLE THE EVENT VIA CALLBACK FUNC
-                log(f'THREAD {nth_thread}: EVENT RECEIVED ({self.kafka_topic})')
+                if VERBOSE: log(f'THREAD {nth_thread}: EVENT RECEIVED ({self.kafka_topic})')
                 on_message(msg.value())
-                log(f'THREAD {nth_thread}: EVENT HANDLED')
+                if VERBOSE: log(f'THREAD {nth_thread}: EVENT HANDLED')
 
             # SILENTLY DEAL WITH OTHER ERRORS
             except Exception as error:
