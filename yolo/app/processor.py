@@ -25,14 +25,18 @@ def run():
     if not resource_exists(f'./models/{args["model"]}.pt'):
         return
 
-    # PROPERLY LOAD THE YOLO MODEL
-    yolo = torch.hub.load('ultralytics/yolov5', "custom", path=f'./models/{args["model"]}.pt', trust_repo=True, force_reload=True)
-    device = yolo.parameters().__next__().device
-    log(f'LOADED MODEL ({args["model"]}) ON DEVICE ({device})')
-
     # CREATE KAFKA CLIENTS
     kafka_consumer = create_consumer(args['kafka']['input_topic'])
     kafka_producer = create_producer()
+
+    # MAKE SURE KAFKA CONNECTIONS ARE OK
+    if not kafka_producer.connected() or not kafka_consumer.connected():
+        return
+
+    # PROPERLY LOAD THE YOLO MODEL
+    yolo = torch.hub.load('ultralytics/yolov5', 'custom', path=f'./models/{args["model"]}.pt', trust_repo=True, force_reload=True)
+    device = yolo.parameters().__next__().device
+    log(f'LOADED MODEL ({args["model"]}) ON DEVICE ({device})')
 
     # CONSUMER THREAD STUFF
     thread_pool = args['worker_threads']

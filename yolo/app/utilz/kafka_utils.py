@@ -24,10 +24,22 @@ class create_producer:
             'bootstrap.servers': KAFKA_SERVERS,
         })
 
+    # MAKE SURE KAFKA CONNECTION IS OK
+    def connected(self):
+        try:
+            metadata = self.kafka_client.list_topics(timeout=2)
+            log('SUCCESSFULLY CONNECTED TO KAFKA')
+            return True
+        except:
+            log(f'COULD NOT CONNECT WITH KAFKA SERVER ({KAFKA_SERVERS})')
+            return False
+
     # ON CONSUMER CALLBACK, DO..
     def ack_callback(self, error, message):
         if error:
             print('ACK ERROR', error)
+        else:
+            if VERBOSE: log(f'MESSAGE PUSHED')
 
     # PUSH MESSAGE TO A KAFK TOPIC
     def push_msg(self, topic_name, bytes_data):
@@ -38,8 +50,6 @@ class create_producer:
             value=bytes_data,
             on_delivery=self.ack_callback,
         )
-
-        if VERBOSE: log(f'MESSAGE PUSHED ({topic_name})')
 
         # ASYNCRONOUSLY AWAIT CONSUMER ACK BEFORE SENDING NEXT MSG
         self.kafka_client.poll(1)
@@ -55,7 +65,6 @@ class create_consumer:
 
         # SET STATIC CONSUMPTION CONFIGS
         self.kafka_topic = kafka_topic
-        self.delivery_guarantee = 'at_most_once' # OR at_least_once
 
         # CREATE THE CONSUMER CLIENT
         self.kafka_client = Consumer({
@@ -63,7 +72,8 @@ class create_consumer:
             'group.id': kafka_topic + '.consumers',
             'enable.auto.commit': False,
             'on_commit': self.ack_callback,
-            'auto.offset.reset': 'latest' # earliest latest
+            'auto.offset.reset': 'latest',
+            # 'auto.offset.reset': 'earliest'
         })
 
         # SUBSCRIBE TO THE KAFKA TOPIC
@@ -73,6 +83,16 @@ class create_consumer:
     def __del__(self):
         log('KAFKA CLIENT CLOSED')
         self.kafka_client.close()
+
+    # MAKE SURE KAFKA CONNECTION IS OK
+    def connected(self):
+        try:
+            metadata = self.kafka_client.list_topics(timeout=2)
+            log('SUCCESSFULLY CONNECTED TO KAFKA')
+            return True
+        except:
+            log(f'COULD NOT CONNECT WITH KAFKA SERVER ({KAFKA_SERVERS})') 
+            return False
 
     # AUTO CALLBACK WHEN CONSUMER COMMITS MESSAGE
     def ack_callback(self, error, partitions):

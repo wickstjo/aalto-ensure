@@ -30,13 +30,13 @@ spec:
         # THORTTLE CONTAINERS OR NAH?
         # FEW LARGER PROCESSES, OR MANY SMALL ONES?
         # TECHNICALLY, THE END RESULT SHOULD BE THE SAME WITH KAFKA ROUTING
-        # resources:
-        #   limits:
-        #     cpu: 1000m
-        #   requests:
-
-        #     # SHOULD BE SMALLER THAN LIMIT?
-        #     cpu: 1000m
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+          
+            # SHOULD BE SMALLER THAN LIMIT?
+            cpu: 1000m
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +65,7 @@ spec:
   # DETERMINE MAX REPLICAS BASED ON THOTTLED RESOURCES
   # 1 CORE PER POD, 20 PODS TOTAL = MAX 20 REPLICAS
   minReplicas: 1
-  maxReplicas: 20
+  maxReplicas: 40
   metrics:
   - type: Resource
     resource:
@@ -75,7 +75,7 @@ spec:
 
         # HIGH PERCENTAGE = SCALE SLOWER
         # LOW PERCENTAGE = SCALE FASTER
-        averageUtilization: 30
+        averageUtilization: 25
 
   # DEPENDENT ON METRICS SERVER INTERVAL (>=10s)
   # ADD 10-20% BUFFER TO MAKE SURE METRICS SERVER IS FRESH?

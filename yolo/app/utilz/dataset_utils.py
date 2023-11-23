@@ -35,7 +35,6 @@ def parse_dataset(args, buffer: Queue):
     if args['max_frames'] > 0:
         n_frames = min(n_frames, args['max_frames'])
 
-    # PROCESS ALL FRAMES
     for frame in range(n_frames):
         frame_data = {}
 

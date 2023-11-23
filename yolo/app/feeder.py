@@ -29,29 +29,40 @@ def run():
     if not resource_exists(f'./datasets/{args["dataset"]["name"]}.hdf5'):
         return
 
+    # CREATE KAFKA PRODUCER
+    kafka_producer = create_producer()
+
+    # MAKE SURE KAFKA CONNECTION IS OK
+    if not kafka_producer.connected():
+        return
+    
     # START GRADUALLY LOADING DATASET INTO A QUEUE BUFFER
     queue = Queue(maxsize=args['queue_buffer'])
     parse_dataset(args['dataset'], queue)
 
-    # CREATE KAFKA PRODUCER
-    kafka_producer = create_producer()
+    # INSTANTIATE THREAD PARAMS
     thread_lock = create_lock()
     threads = []
 
     # PRODUCER THREAD WORK LOOP
     def thread_work(nth_thread, lock):
         while queue._notempty and lock.is_active():
+            try:
+                # SELECT NEXT BUFFER ITEM
+                item = queue.get(block=True, timeout=5)
 
-            # SELECT NEXT BUFFER ITEM
-            item = queue.get(block=True, timeout=5)
+                # PROCESS EACH FRAME'S IMG MATRIX
+                for _, frame in item.data.items():
+                    if lock.is_active():
 
-            # PROCESS EACH FRAME'S IMG MATRIX
-            for _, frame in item.data.items():
-                if lock.is_active():
+                        # PUSH IT TO KAFKA
+                        kafka_producer.push_msg('yolo_input', frame.data.tobytes())
+                        time.sleep(args['frame_cooldown'])
 
-                    # PUSH IT TO KAFKA
-                    kafka_producer.push_msg('yolo_input', frame.data.tobytes())
-                    time.sleep(args['frame_cooldown'])
+            # DIE PEACEFULLY WHEN QUEUE IS EMPTY
+            except Empty:
+                log(f'QUEUE WAS EMPTY, THREAD {nth_thread} DYING..')
+                break
 
     # CREATE & START WORKER THREADS
     try:
