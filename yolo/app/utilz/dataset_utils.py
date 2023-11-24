@@ -1,6 +1,6 @@
 from typing import NamedTuple, Dict
 from multiprocessing import Queue
-import h5py, json, os
+import h5py, json
 
 # DATASET FRAME STRUCT
 class Frame(NamedTuple):
@@ -10,15 +10,7 @@ class Frame(NamedTuple):
     data: Dict[str, bytes]
 
 # READ & PARSE HDF5 DATASET
-def parse_dataset(args, buffer: Queue):
-    """
-    Read data from given dataset to given buffer.
-
-    Reading is done frame-by-frame, where one frame contains data from multiple sensors.
-
-    With large enough buffer, the disk-io should not be the bottleneck of the whole system.
-    The buffer length can be limited to avoid issues with too high memory usage.
-    """
+def parse_dataset(args, buffer: Queue, thread_lock):
 
     # EXTRACT DATASET COMPONENTS
     dataset = h5py.File(f'./datasets/{args["name"]}.hdf5', 'r')
@@ -37,6 +29,9 @@ def parse_dataset(args, buffer: Queue):
 
     for frame in range(n_frames):
         frame_data = {}
+
+        if not thread_lock.is_active():
+            break
 
         # FILL THE CURRENT FRAME
         for sensor_name, data_iter in sensor_data_iters.items():
@@ -58,4 +53,5 @@ def parse_dataset(args, buffer: Queue):
         # PUSH IT TO THE BUFFER -- WHEN THERE IS SPACE
         buffer.put(frame_wrapper, block=True)
 
+    print('DATASET ENDED')
     dataset.close()

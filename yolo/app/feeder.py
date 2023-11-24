@@ -18,7 +18,8 @@ def run():
             'repeat': 1,
         },
         'thread_pool': 3,
-        'queue_buffer': 1000,
+        'queue_size': 1000,
+        'queue_delay': 2,
         'frame_cooldown': 0.2,
     }
 
@@ -36,13 +37,21 @@ def run():
     if not kafka_producer.connected():
         return
     
-    # START GRADUALLY LOADING DATASET INTO A QUEUE BUFFER
-    queue = Queue(maxsize=args['queue_buffer'])
-    parse_dataset(args['dataset'], queue)
-
     # INSTANTIATE THREAD PARAMS
     thread_lock = create_lock()
     threads = []
+
+    # START GRADUALLY LOADING DATASET INTO A QUEUE BUFFER
+    queue = Queue(maxsize=args['queue_size'])
+
+    # START PARSING DATASET INTO BUFFER -- IN ANOTHER THREAD
+    thread = Thread(target=parse_dataset, args=(args['dataset'], queue, thread_lock))
+    threads.append(thread)
+    thread.start()
+
+    # WAIT FOR THQ BUFFER TO FILL ABIT
+    log(f'LOADING BUFFER FOR {args["queue_delay"]} SECONDS')
+    time.sleep(args['queue_delay'])
 
     # PRODUCER THREAD WORK LOOP
     def thread_work(nth_thread, lock):

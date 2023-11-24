@@ -34,6 +34,7 @@ def run():
         return
 
     # PROPERLY LOAD THE YOLO MODEL
+    # TODO: LOAD A MODEL FOR EACH THREAD
     yolo = torch.hub.load('ultralytics/yolov5', 'custom', path=f'./models/{args["model"]}.pt', trust_repo=True, force_reload=True)
     device = yolo.parameters().__next__().device
     log(f'LOADED MODEL ({args["model"]}) ON DEVICE ({device})')
