@@ -1,6 +1,7 @@
 from typing import NamedTuple, Dict
 from multiprocessing import Queue
 import h5py, json
+from .misc import log
 
 # DATASET FRAME STRUCT
 class Frame(NamedTuple):
@@ -21,37 +22,40 @@ def parse_dataset(args, buffer: Queue, thread_lock):
     n_frames = metadata["n_frames"]
 
     # COLLECT SENSOR COMPONENTS
-    sensor_names = list(dataset["sensors"].keys())
-    sensor_data_iters = {key: iter(sensors[key]) for key in sensor_names}
+    for nth in range(args['repeat']):
+        sensor_names = list(dataset["sensors"].keys())
+        sensor_data_iters = {key: iter(sensors[key]) for key in sensor_names}
 
-    if args['max_frames'] > 0:
-        n_frames = min(n_frames, args['max_frames'])
+        if args['max_frames'] > 0:
+            n_frames = min(n_frames, args['max_frames'])
 
-    for frame in range(n_frames):
-        frame_data = {}
+        for frame in range(n_frames):
+            frame_data = {}
 
-        if not thread_lock.is_active():
-            break
+            if not thread_lock.is_active():
+                break
 
-        # FILL THE CURRENT FRAME
-        for sensor_name, data_iter in sensor_data_iters.items():
-            active = activity[sensor_name][frame]
+            # FILL THE CURRENT FRAME
+            for sensor_name, data_iter in sensor_data_iters.items():
+                active = activity[sensor_name][frame]
 
-            # Sensor has data for this frame only if it is marked as active
-            if active:
-                sensor_data = next(data_iter)
-                frame_data[sensor_name] = sensor_data
+                # Sensor has data for this frame only if it is marked as active
+                if active:
+                    sensor_data = next(data_iter)
+                    frame_data[sensor_name] = sensor_data
 
-        # CREATE FRAME STRUCT
-        frame_wrapper = Frame(
-            frame_number=frame,
-            max_frames=n_frames,
-            data=frame_data,
-            total_sensors=total_sensors
-        )
+            # CREATE FRAME STRUCT
+            frame_wrapper = Frame(
+                frame_number=frame,
+                max_frames=n_frames,
+                data=frame_data,
+                total_sensors=total_sensors
+            )
 
-        # PUSH IT TO THE BUFFER -- WHEN THERE IS SPACE
-        buffer.put(frame_wrapper, block=True)
+            # PUSH IT TO THE BUFFER -- WHEN THERE IS SPACE
+            buffer.put(frame_wrapper, block=True)
 
-    print('DATASET ENDED')
+        log(f'DATASET ITERATION ({nth+1}) DONE')
+
+    log('DATASET FULLY PARSED')
     dataset.close()

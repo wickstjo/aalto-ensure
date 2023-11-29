@@ -20,7 +20,7 @@ def run():
         'thread_pool': 3,
         'queue_size': 1000,
         'queue_delay': 2,
-        'frame_cooldown': 0.2,
+        'frame_cooldown': 0.1,
     }
 
     ########################################################################################
@@ -29,17 +29,20 @@ def run():
     # MAKE SURE THE HDF5 DATASET EXISTS
     if not resource_exists(f'./datasets/{args["dataset"]["name"]}.hdf5'):
         return
-
-    # CREATE KAFKA PRODUCER
-    kafka_producer = create_producer()
-
-    # MAKE SURE KAFKA CONNECTION IS OK
-    if not kafka_producer.connected():
-        return
     
     # INSTANTIATE THREAD PARAMS
     thread_lock = create_lock()
     threads = []
+    kafka_producers = []
+
+    # CREATE KAFKA PRODUCERS FOR EACH THREAD
+    for _ in range(args['thread_pool']):
+        kafka_producer = create_producer()
+        kafka_producers.append(kafka_producer)
+
+    # MAKE SURE KAFKA CONNECTION IS OK
+    if not kafka_producers[0].connected():
+        return
 
     # START GRADUALLY LOADING DATASET INTO A QUEUE BUFFER
     queue = Queue(maxsize=args['queue_size'])
@@ -65,7 +68,7 @@ def run():
                     if lock.is_active():
 
                         # PUSH IT TO KAFKA
-                        kafka_producer.push_msg('yolo_input', frame.data.tobytes())
+                        kafka_producers[nth_thread - 1].push_msg('yolo_input', frame.data.tobytes())
                         time.sleep(args['frame_cooldown'])
 
             # DIE PEACEFULLY WHEN QUEUE IS EMPTY

@@ -123,7 +123,7 @@ class create_consumer:
 
                 # HANDLE THE EVENT VIA CALLBACK FUNC
                 if VERBOSE: log(f'THREAD {nth_thread}: EVENT RECEIVED ({self.kafka_topic})')
-                on_message(msg.value())
+                on_message(msg.value(), nth_thread)
                 if VERBOSE: log(f'THREAD {nth_thread}: EVENT HANDLED')
 
             # SILENTLY DEAL WITH OTHER ERRORS
