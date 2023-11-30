@@ -63,3 +63,5 @@ services:
       KAFKA_BROKER_ID: 3
       # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://130.233.193.117:10003
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://localhost:10003
+
+# docker compose up --force-recreate --renew-anon-volumes --remove-orphans
