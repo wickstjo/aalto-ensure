@@ -27,8 +27,6 @@ spec:
         ports:
           - containerPort: 80
         env:
-          - name: WORKER_THREADS
-            value: 5
           - name: YOLO_MODEL
             # value: "custom-20k"
             # value: "custom-120k"
@@ -75,7 +73,7 @@ spec:
 
   # DETERMINE MAX REPLICAS BASED ON THOTTLED RESOURCES
   # 1 CORE PER POD, 20 PODS TOTAL = MAX 20 REPLICAS
-  minReplicas: 34
+  minReplicas: 1
   maxReplicas: 34
   metrics:
   - type: Resource

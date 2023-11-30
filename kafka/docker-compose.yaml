@@ -6,6 +6,11 @@ x-kafka_shared: &kafka_shared
   depends_on:
     - kafka_zookeeper
 
+  # NECESSARY FOR PROMETHEUS
+  volumes:
+    - ./extras/kafka_scraper.yml:/usr/app/kafka_scraper.yml
+    - ./extras/jmx_prometheus_javaagent-0.17.2.jar:/usr/app/jmx_prometheus_javaagent.jar
+
 # SHARED KAFKA ENV
 x-kafka_env: &kafka_env
   KAFKA_AUTO_CREATE_TOPICS_ENABLE: True
@@ -16,6 +21,9 @@ x-kafka_env: &kafka_env
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
   KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  # NECESSARY FOR PROMETHEUS
+  KAFKA_JMX_OPTS: "-javaagent:/usr/app/jmx_prometheus_javaagent.jar=11001:/usr/app/kafka_scraper.yml"
 
 services:
 
@@ -63,5 +71,15 @@ services:
       KAFKA_BROKER_ID: 3
       # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://130.233.193.117:10003
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://localhost:10003
+
+  # SCRAPING FRAMEWORK -- DEFAULT PORT 9090
+  prometheus:
+    image: prom/prometheus:v2.43.0
+    volumes:
+      - ./extras/prometheus_config.yml:/etc/prometheus/config.yml
+    ports:
+      - '9091:9090'
+    command:
+      - '--config.file=/etc/prometheus/config.yml'
 
 # docker compose up --force-recreate --renew-anon-volumes --remove-orphans

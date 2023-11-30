@@ -108,3 +108,11 @@ class create_lock:
     
     def kill(self):
         self.lock = False
+
+# RESIZE ARRAY WHILE ROUGHLY MAINTAINING VALUE RATIOS
+def resize_array(original_array, new_length):
+    original_length = len(original_array)
+    indices = np.linspace(0, original_length - 1, new_length)
+    stretched_array = np.interp(indices, np.arange(original_length), original_array)
+    
+    return stretched_array.tolist()

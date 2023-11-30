@@ -1,5 +1,5 @@
 from utilz.dataset_utils import load_dataset
-from utilz.misc import resource_exists, log, create_lock
+from utilz.misc import resource_exists, log, create_lock, resize_array
 from utilz.kafka_utils import create_producer
 from threading import Thread, Semaphore
 import time, math, random
@@ -15,12 +15,14 @@ def run():
             'fps': 5,
             'repeat': 1,
         },
-        'thread_pool': 4,
-        'queue_size': 500,
-        'queue_delay': 2,
+        'num_threads': 4,
 
-        # EVENTS PER SECOND
-        'mbs_per_second': 2
+        # EXPERIMENT DETAILS
+        'experiment': {
+            'max_mbs': 4,
+            'n_breakpoints': 400,
+            'duration': (60*60*10), 
+        }
     }
 
     ########################################################################################
@@ -39,7 +41,7 @@ def run():
     kafka_producers = []
 
     # CREATE KAFKA PRODUCERS FOR EACH THREAD
-    for _ in range(args['thread_pool']):
+    for _ in range(args['num_threads']):
         kafka_producer = create_producer()
         kafka_producers.append(kafka_producer)
 
@@ -54,28 +56,25 @@ def run():
     ########################################################################################
     ########################################################################################
 
-    # COOLDOWN BREAKPOINTS
-    # 2 MB/s = 0.09960923               MULTIPLIER = 1.03626943
-
-    # DURATION IN SECONDS => MB/s INTERVAL
-    experiment = [
-        (30, 1),
-        (30, 2),
-        (30, 1)
-    ]
-
-    # SHARED ACTION COOLDOWN FOR WORKER THREADS
-    action_cooldown = None
-
-    # TIMESTAMP FOR THREADS TO SYNC TO
-    experiment_start = time.time() + 3
-    log(f'EXPERIMENT STARTING IN 3 SECONDS')
-
-    ########################################################################################
-    ########################################################################################
-
     def experiment_handler(lock):
         global action_cooldown
+
+        # THE DEFAULT DAYNIGHT CYCLE WORKLOAD PERCENTAGES (01 => 23)
+        default_cycle = [
+            0.24, 0.28, 0.32, 0.36, 0.40, 0.53, 
+            0.67, 0.80, 0.73, 0.65, 0.58, 0.50, 
+            0.58, 0.66, 0.74, 0.82, 0.95, 0.90, 
+            0.85, 0.80, 0.65, 0.50, 0.35, 0.20
+        ]
+
+        # SCALE THE ARRAY WHILE MAINTAINING RATIOS
+        real_cycle = resize_array(
+            default_cycle, 
+            args['experiment']['n_breakpoints']
+        )
+
+        # COMPUTE THE EQUAL TIME SLIVER
+        time_sliver = args['experiment']['duration'] / args['experiment']['n_breakpoints']
 
         # COMPUTE THE BYTESIZE OF THE AVERAGE DATASET ITEM
         avg_dataset_item_size = math.ceil(sum([len(x) for x in dataset]) / len(dataset))
@@ -84,17 +83,18 @@ def run():
         while lock.is_active():
 
             # NO MORE BREAKPOINTS LEFT: KILL ALL THE THREADS
-            if len(experiment) == 0:
+            if len(real_cycle) == 0:
+                log('LAST EXPERIMENT BREAKPOINT RAN, TERMINATING..')
                 lock.kill()
                 break
 
-            # OTHERWISE, COMPUTE SELECT NEXT EXPERIMENT BREAKPOINT
-            breakpoint_duration, breakpoint_interval = experiment.pop(1)
-            log(f'NEXT EXPERIMENT BREAKPOINT: ({breakpoint_duration}s @ {breakpoint_interval} MB/s)')
+            # OTHERWISE, FETCH THE NEXT INTERVAL
+            mbs_interval = real_cycle.pop(0) * args['experiment']['max_mbs']
+            log(f'SET NEW INPUT INTERVAL: ({time_sliver}s @ {mbs_interval} MB/s)')
 
             # COMPUTE THE NEW ACTION COOLDOWN
-            events_per_second = (breakpoint_interval * 1000000) / avg_dataset_item_size
-            new_cooldown = (1 / (events_per_second / args['thread_pool']))
+            events_per_second = (mbs_interval * 1000000) / avg_dataset_item_size
+            new_cooldown = (1 / (events_per_second / args['num_threads']))
 
             # SAFELY SET THE NEXT COOLDOWN
             with semaphore:
@@ -105,18 +105,14 @@ def run():
                 pass
             
             # THEN SLEEP UNTIL THE NEXT BREAKPOINT
-            time.sleep(breakpoint_duration)
-
-    # CREATE THE EXPERIMENT HANDLER
-    handler_thread = Thread(target=experiment_handler, args=(thread_lock,))
-    threads.append(handler_thread)
-    handler_thread.start()
+            time.sleep(time_sliver)
 
     ########################################################################################
     ########################################################################################
 
     # PRODUCER THREAD WORK LOOP
     def thread_work(nth_thread, lock):
+        global action_cooldown
 
         # RANDOMLY PICK A STARTING INDEX FROM THE DATASET
         next_index = random.randrange(dataset_length)
@@ -152,11 +148,22 @@ def run():
     ########################################################################################
     ########################################################################################
 
-    # CREATE & START WORKER THREADS
     try:
-        log(f'CREATING PRODUCER THREAD POOL ({args["thread_pool"]})')
+    
+        # SHARED ACTION COOLDOWN FOR WORKER THREADS
+        # TIMESTAMP FOR THREADS TO SYNC TO
+        action_cooldown = None
+        experiment_start = time.time() + 3
 
-        for nth in range(args['thread_pool']):
+        # CREATE THE EXPERIMENT HANDLER
+        log(f'CREATING EXPERIMENT HANDLER')
+        handler_thread = Thread(target=experiment_handler, args=(thread_lock,))
+        threads.append(handler_thread)
+        handler_thread.start()
+
+        log(f'CREATING PRODUCER THREAD POOL ({args["num_threads"]})')
+
+        for nth in range(args['num_threads']):
             thread = Thread(target=thread_work, args=(nth+1, thread_lock))
             threads.append(thread)
             thread.start()
