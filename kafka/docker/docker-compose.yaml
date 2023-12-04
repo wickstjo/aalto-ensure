@@ -72,11 +72,15 @@ services:
       # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://130.233.193.117:10003
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_3:11000,PLAINTEXT_HOST://localhost:10003
 
-  # SCRAPING FRAMEWORK -- DEFAULT PORT 9090
+  # DEDICATED PROMETHEUS SERVER FOR JUST KAFKA
+  # NOTE THE 9091 PORT, WHILE KUBE PROMETHEUS RUNS ON 9090
   prometheus:
     image: prom/prometheus:v2.43.0
     volumes:
-      - ./extras/prometheus_config.yml:/etc/prometheus/config.yml
+      - ./prometheus_config.yml:/etc/prometheus/config.yml
+
+      # REMEMBER TO GIVE DIR CHMOD 777
+      - ./db_prometheus:/prometheus:rw
     ports:
       - '9091:9090'
     command:
