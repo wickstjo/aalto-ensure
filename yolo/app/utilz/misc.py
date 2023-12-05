@@ -1,7 +1,7 @@
 import bezier, datetime
 import numpy as np
 import matplotlib.pyplot as plt
-import json, time, math, os
+import json, time, math, os, logging
 from datetime import datetime
 
 class DayNightCycle:
@@ -97,6 +97,8 @@ def log(msg, with_break=False):
         print(f'\n[{timestamp}]\t {msg}', flush=True)
     else:
         print(f'[{timestamp}]\t {msg}', flush=True)
+
+    logging.info(f'[{timestamp}]\t {msg}')
 
 # THREAD LOCK TO KILL HELPER THREADS
 class create_lock:

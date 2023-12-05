@@ -27,12 +27,14 @@ spec:
         ports:
           - containerPort: 80
         env:
+          - name: VALIDATE_RESULTS
+            value: "FALSE"
           - name: YOLO_MODEL
-            # value: "custom-20k"
+            value: "custom-20k"
             # value: "custom-120k"
             # value: "custom-300k"
             # value: "custom-750k"
-            value: "yolov5n"
+            # value: "yolov5n"
             # value: "yolov5m"
             # value: "yolov5s"
 
@@ -84,12 +86,15 @@ spec:
 
         # HIGH PERCENTAGE = SCALE SLOWER
         # LOW PERCENTAGE = SCALE FASTER
-        averageUtilization: 100
+        averageUtilization: 80
 
   # DEPENDENT ON METRICS SERVER INTERVAL (>=10s)
   # ADD 10-20% BUFFER TO MAKE SURE METRICS SERVER IS FRESH?
   behavior:
+
+    # MINIMUM 10 SECONDS, BUT SHOULD PROBABLY BE 60+ SECONDS FOR STABILITY
+    # STRATEGY: SCALE UP FAST WHEN NECESSARY, BUT SCALE DOWN SLOWLY FOR STABILITY?
     scaleDown:
-      stabilizationWindowSeconds: 10
+      stabilizationWindowSeconds: 60
     scaleUp:
       stabilizationWindowSeconds: 10

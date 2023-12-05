@@ -9,9 +9,9 @@ import sys
 ###################################################################################################
 ###################################################################################################
 
-# KAFKA_SERVERS = '130.233.193.117:10001,130.233.193.117:10002,130.233.193.117:10003'
-KAFKA_SERVERS = 'localhost:10001,localhost:10002,localhost:10003'
-VERBOSE = False
+KAFKA_SERVERS = '130.233.193.117:10001,130.233.193.117:10002,130.233.193.117:10003'
+# KAFKA_SERVERS = 'localhost:10001,localhost:10002,localhost:10003'
+VERBOSE = True
 
 ###################################################################################################
 ###################################################################################################
@@ -77,12 +77,28 @@ class create_consumer:
         })
 
         # SUBSCRIBE TO THE KAFKA TOPIC
-        self.kafka_client.subscribe([self.kafka_topic])
+        self.kafka_client.subscribe([kafka_topic], self.assigned, self.revoked, self.lost)
 
     # WHEN CLASS DIES, KILL THE KAFKA CLIENT
     def __del__(self):
         log('KAFKA CLIENT CLOSED')
         self.kafka_client.close()
+
+    # PARTITION ASSIGNMENT SUCCESS
+    def assigned(self, consumer, partition_data):
+        if VERBOSE:
+            partitions = [p.partition for p in partition_data]
+            log(f'CONSUMER ASSIGNED PARTITIONS: {partitions}')
+
+    # PARTITION ASSIGNMENT REVOKED
+    def revoked(self, consumer, partition_data):
+        if VERBOSE:
+            partitions = [p.partition for p in partition_data]
+            log(f'CONSUMER PARTITION ASSIGNMENT REVOKED: {partitions}')
+
+    # PARTITION ASSIGNMENT LOST
+    def lost(self, consumer, partition_data):
+        log(f'CONSUMER ASSIGNMENT LOST: {consumer} {partition_data}')
 
     # MAKE SURE KAFKA CONNECTION IS OK
     def connected(self):

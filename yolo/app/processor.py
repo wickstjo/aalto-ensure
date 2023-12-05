@@ -2,16 +2,20 @@ from utilz.kafka_utils import create_consumer, create_producer
 from utilz.misc import custom_serializer, resource_exists, log, create_lock
 from PIL import Image
 from numpy import asarray
-import io, torch, socket, os
+import io, torch, socket, os, logging
 
 def run():
 
     # DYNAMIC ARGUMENTS FOR YOLO PROCESSING
     args = {
         'model': os.environ.get('YOLO_MODEL', 'custom-750k'),
+        'validate_results': True if os.environ.get('VALIDATE_RESULTS', 'TRUE') == 'TRUE' else False,
         'kafka_input': 'yolo_input',
         'kafka_output': 'yolo_output',
     }
+
+    # CREATE A PERMANENT LOGFILE
+    logging.basicConfig(filename='yolo_logs.log', encoding='utf-8', level=logging.DEBUG)
 
     ########################################################################################
     ########################################################################################
@@ -51,16 +55,17 @@ def run():
         results = yolo_model.forward(asarray(img))
 
         # PUSH RESULTS INTO VALIDATION TOPIC
-        kafka_producer.push_msg(args['kafka_output'], custom_serializer({
-            'timestamps': {
-                'pre': results.t[0],
-                'inf': results.t[1],
-                'post': results.t[2],
-            },
-            'source': ip_addr,
-            'model': args['model'],
-            'dimensions': results.s
-        }))
+        if args['validate_results']:
+            kafka_producer.push_msg(args['kafka_output'], custom_serializer({
+                'timestamps': {
+                    'pre': results.t[0],
+                    'inf': results.t[1],
+                    'post': results.t[2],
+                },
+                'source': ip_addr,
+                'model': args['model'],
+                'dimensions': results.s
+            }))
 
     ########################################################################################
     ########################################################################################
