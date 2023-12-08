@@ -2,9 +2,37 @@ from utilz.dataset_utils import load_dataset
 from utilz.misc import resource_exists, log, create_lock, resize_array
 from utilz.kafka_utils import create_producer
 from threading import Thread, Semaphore
-import time, math, random
+import time, math, random, argparse
+
+# python3 feeder.py --duration 7200 --breakpoints 200 --max_mbps 15
+
+# PARSE PYTHON ARGUMENTS
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-m",
+    "--max_mbps",
+    type=int,
+    default=1,
+    help="MB/s limit at 100% throughput",
+)
+parser.add_argument(
+    "-b",
+    "--breakpoints",
+    type=int,
+    default=200,
+    help="How many sections the experiment duration will be split into.",
+)
+parser.add_argument(
+    "-d",
+    "--duration",
+    type=int,
+    default=(60*60*2),
+    help="The experiment duration in seconds",
+)
 
 def run():
+
+    py_args = parser.parse_args()
 
     # DYNAMIC ARGUMENTS
     args = {
@@ -19,9 +47,9 @@ def run():
 
         # EXPERIMENT DETAILS
         'experiment': {
-            'max_mbs': 4,
-            'n_breakpoints': 400,
-            'duration': (60*60*10), 
+            'max_mbs': py_args.max_mbps,
+            'n_breakpoints': py_args.breakpoints,
+            'duration': py_args.duration, 
         }
     }
 
