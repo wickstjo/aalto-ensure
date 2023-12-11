@@ -1,0 +1,394 @@
+Name:               worker1
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker1
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 130.233.193.143/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 10.26.169.128
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 07 Dec 2023 09:43:53 +0200
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  worker1
+  AcquireTime:     <unset>
+  RenewTime:       Sun, 10 Dec 2023 03:22:20 +0200
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Thu, 07 Dec 2023 09:43:57 +0200   Thu, 07 Dec 2023 09:43:57 +0200   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Sun, 10 Dec 2023 03:21:51 +0200   Thu, 07 Dec 2023 09:43:53 +0200   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Sun, 10 Dec 2023 03:21:51 +0200   Thu, 07 Dec 2023 09:43:53 +0200   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Sun, 10 Dec 2023 03:21:51 +0200   Thu, 07 Dec 2023 09:43:53 +0200   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Sun, 10 Dec 2023 03:21:51 +0200   Thu, 07 Dec 2023 09:43:53 +0200   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  130.233.193.143
+  Hostname:    worker1
+Capacity:
+  cpu:                8
+  ephemeral-storage:  959786032Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16014944Ki
+  pods:               110
+Allocatable:
+  cpu:                8
+  ephemeral-storage:  884538805627
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15912544Ki
+  pods:               110
+System Info:
+  Machine ID:                 9511df9c26824e7cb9294f3e7d6d801a
+  System UUID:                92db20b0-8cc7-6590-70e1-48210b576c8c
+  Boot ID:                    159225af-4b58-447a-b9b7-bf6e1e2be165
+  Kernel Version:             6.2.0-36-generic
+  OS Image:                   Ubuntu 22.04.3 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.7
+  Kubelet Version:            v1.28.3
+  Kube-Proxy Version:         v1.28.3
+PodCIDR:                      10.0.1.0/24
+PodCIDRs:                     10.0.1.0/24
+Non-terminated Pods:          (7 in total)
+  Namespace                   Name                               CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                               ------------  ----------  ---------------  -------------  ---
+  kepler                      kepler-exporter-v8zwx              100m (1%)     0 (0%)      400Mi (2%)       0 (0%)         2d1h
+  kube-system                 calico-node-kd86s                  250m (3%)     0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 kube-proxy-vtjmr                   0 (0%)        0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 metrics-server-5cccc7494c-qwgwd    100m (1%)     0 (0%)      200Mi (1%)       0 (0%)         2d
+  monitoring                  alertmanager-main-1                14m (0%)      110m (1%)   150Mi (0%)       150Mi (0%)     2d1h
+  monitoring                  grafana-748964b847-4sc4m           100m (1%)     200m (2%)   100Mi (0%)       200Mi (1%)     2d1h
+  monitoring                  node-exporter-fljg6                112m (1%)     270m (3%)   200Mi (1%)       220Mi (1%)     2d1h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                676m (8%)    580m (7%)
+  memory             1050Mi (6%)  570Mi (3%)
+  ephemeral-storage  0 (0%)       0 (0%)
+  hugepages-1Gi      0 (0%)       0 (0%)
+  hugepages-2Mi      0 (0%)       0 (0%)
+Events:              <none>
+
+###################################################################################################################################################################
+
+Name:               worker2
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker2
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 130.233.193.147/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 10.109.104.64
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 07 Dec 2023 09:44:32 +0200
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  worker2
+  AcquireTime:     <unset>
+  RenewTime:       Sun, 10 Dec 2023 03:22:51 +0200
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Thu, 07 Dec 2023 09:44:36 +0200   Thu, 07 Dec 2023 09:44:36 +0200   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Sun, 10 Dec 2023 03:22:43 +0200   Thu, 07 Dec 2023 09:44:32 +0200   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Sun, 10 Dec 2023 03:22:43 +0200   Thu, 07 Dec 2023 09:44:32 +0200   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Sun, 10 Dec 2023 03:22:43 +0200   Thu, 07 Dec 2023 09:44:32 +0200   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Sun, 10 Dec 2023 03:22:43 +0200   Thu, 07 Dec 2023 09:44:33 +0200   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  130.233.193.147
+  Hostname:    worker2
+Capacity:
+  cpu:                8
+  ephemeral-storage:  959786032Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16015572Ki
+  pods:               110
+Allocatable:
+  cpu:                8
+  ephemeral-storage:  884538805627
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15913172Ki
+  pods:               110
+System Info:
+  Machine ID:                 2a6bb543cdd74377b713a15f1b6a9388
+  System UUID:                f29b04b8-0aaf-75f6-3d20-48210b576128
+  Boot ID:                    2869ae13-472b-4def-b7cf-87623880b69c
+  Kernel Version:             6.2.0-36-generic
+  OS Image:                   Ubuntu 22.04.3 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.7
+  Kubelet Version:            v1.28.3
+  Kube-Proxy Version:         v1.28.3
+PodCIDR:                      10.0.2.0/24
+PodCIDRs:                     10.0.2.0/24
+Non-terminated Pods:          (6 in total)
+  Namespace                   Name                     CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                     ------------  ----------  ---------------  -------------  ---
+  kepler                      kepler-exporter-59vpn    100m (1%)     0 (0%)      400Mi (2%)       0 (0%)         2d1h
+  kube-system                 calico-node-qq9bt        250m (3%)     0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 kube-proxy-tmvl4         0 (0%)        0 (0%)      0 (0%)           0 (0%)         2d17h
+  monitoring                  alertmanager-main-0      14m (0%)      110m (1%)   150Mi (0%)       150Mi (0%)     2d1h
+  monitoring                  node-exporter-hwvt4      112m (1%)     270m (3%)   200Mi (1%)       220Mi (1%)     2d1h
+  monitoring                  prometheus-k8s-0         10m (0%)      10m (0%)    450Mi (2%)       50Mi (0%)      2d1h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                486m (6%)    390m (4%)
+  memory             1200Mi (7%)  420Mi (2%)
+  ephemeral-storage  0 (0%)       0 (0%)
+  hugepages-1Gi      0 (0%)       0 (0%)
+  hugepages-2Mi      0 (0%)       0 (0%)
+Events:              <none>
+
+###################################################################################################################################################################
+
+Name:               worker3
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker3
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 130.233.193.60/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 10.241.19.0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 07 Dec 2023 09:44:57 +0200
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  worker3
+  AcquireTime:     <unset>
+  RenewTime:       Sun, 10 Dec 2023 03:23:18 +0200
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Thu, 07 Dec 2023 09:45:02 +0200   Thu, 07 Dec 2023 09:45:02 +0200   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Sun, 10 Dec 2023 03:22:53 +0200   Thu, 07 Dec 2023 09:44:57 +0200   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Sun, 10 Dec 2023 03:22:53 +0200   Thu, 07 Dec 2023 09:44:57 +0200   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Sun, 10 Dec 2023 03:22:53 +0200   Thu, 07 Dec 2023 09:44:57 +0200   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Sun, 10 Dec 2023 03:22:53 +0200   Thu, 07 Dec 2023 09:44:57 +0200   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  130.233.193.60
+  Hostname:    worker3
+Capacity:
+  cpu:                8
+  ephemeral-storage:  959786032Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16014932Ki
+  pods:               110
+Allocatable:
+  cpu:                8
+  ephemeral-storage:  884538805627
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15912532Ki
+  pods:               110
+System Info:
+  Machine ID:                 248e902884094f199d1ccb1e2b0113da
+  System UUID:                0d3d7942-50fa-a11c-c0c8-48210b575cf4
+  Boot ID:                    2a38f891-bde1-4c41-bd0b-0d720a7b7d2a
+  Kernel Version:             6.2.0-36-generic
+  OS Image:                   Ubuntu 22.04.3 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.7
+  Kubelet Version:            v1.28.3
+  Kube-Proxy Version:         v1.28.3
+PodCIDR:                      10.0.3.0/24
+PodCIDRs:                     10.0.3.0/24
+Non-terminated Pods:          (6 in total)
+  Namespace                   Name                                   CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                   ------------  ----------  ---------------  -------------  ---
+  kepler                      kepler-exporter-xvkd7                  100m (1%)     0 (0%)      400Mi (2%)       0 (0%)         2d1h
+  kube-system                 calico-node-gsw6d                      250m (3%)     0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 kube-proxy-c6qqv                       0 (0%)        0 (0%)      0 (0%)           0 (0%)         2d17h
+  monitoring                  blackbox-exporter-d9597b5ff-zqsjc      30m (0%)      60m (0%)    60Mi (0%)        120Mi (0%)     2d1h
+  monitoring                  node-exporter-754wz                    112m (1%)     270m (3%)   200Mi (1%)       220Mi (1%)     2d1h
+  monitoring                  prometheus-adapter-7cc789bfcc-sh25n    102m (1%)     250m (3%)   180Mi (1%)       180Mi (1%)     2d1h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                594m (7%)   580m (7%)
+  memory             840Mi (5%)  520Mi (3%)
+  ephemeral-storage  0 (0%)      0 (0%)
+  hugepages-1Gi      0 (0%)      0 (0%)
+  hugepages-2Mi      0 (0%)      0 (0%)
+Events:              <none>
+
+###################################################################################################################################################################
+
+Name:               worker4
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker4
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 130.233.193.124/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 10.198.33.0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 07 Dec 2023 09:45:18 +0200
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  worker4
+  AcquireTime:     <unset>
+  RenewTime:       Sun, 10 Dec 2023 03:23:24 +0200
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Thu, 07 Dec 2023 09:45:22 +0200   Thu, 07 Dec 2023 09:45:22 +0200   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Sun, 10 Dec 2023 03:18:34 +0200   Thu, 07 Dec 2023 09:45:18 +0200   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Sun, 10 Dec 2023 03:18:34 +0200   Thu, 07 Dec 2023 09:45:18 +0200   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Sun, 10 Dec 2023 03:18:34 +0200   Thu, 07 Dec 2023 09:45:18 +0200   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Sun, 10 Dec 2023 03:18:34 +0200   Thu, 07 Dec 2023 09:45:18 +0200   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  130.233.193.124
+  Hostname:    worker4
+Capacity:
+  cpu:                8
+  ephemeral-storage:  959786032Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16014932Ki
+  pods:               110
+Allocatable:
+  cpu:                8
+  ephemeral-storage:  884538805627
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15912532Ki
+  pods:               110
+System Info:
+  Machine ID:                 1b539f9e2f6449c884f8eb5b8a1cfb69
+  System UUID:                faf60d68-f79e-d5ce-d143-48210b576211
+  Boot ID:                    d8a2a9f0-9e0b-4040-a528-44ae2c97bb8a
+  Kernel Version:             6.2.0-36-generic
+  OS Image:                   Ubuntu 22.04.3 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.7
+  Kubelet Version:            v1.28.3
+  Kube-Proxy Version:         v1.28.3
+PodCIDR:                      10.0.4.0/24
+PodCIDRs:                     10.0.4.0/24
+Non-terminated Pods:          (6 in total)
+  Namespace                   Name                                   CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                   ------------  ----------  ---------------  -------------  ---
+  kepler                      kepler-exporter-c6fqj                  100m (1%)     0 (0%)      400Mi (2%)       0 (0%)         2d1h
+  kube-system                 calico-node-98z6f                      250m (3%)     0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 kube-proxy-hdqbv                       0 (0%)        0 (0%)      0 (0%)           0 (0%)         2d17h
+  monitoring                  alertmanager-main-2                    14m (0%)      110m (1%)   150Mi (0%)       150Mi (0%)     2d1h
+  monitoring                  kube-state-metrics-674c5fc7f8-5gg54    40m (0%)      160m (2%)   230Mi (1%)       330Mi (2%)     2d1h
+  monitoring                  node-exporter-55xx2                    112m (1%)     270m (3%)   200Mi (1%)       220Mi (1%)     2d1h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                516m (6%)   540m (6%)
+  memory             980Mi (6%)  700Mi (4%)
+  ephemeral-storage  0 (0%)      0 (0%)
+  hugepages-1Gi      0 (0%)      0 (0%)
+  hugepages-2Mi      0 (0%)      0 (0%)
+Events:              <none>
+
+###################################################################################################################################################################
+
+Name:               worker5
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=worker5
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: unix:///var/run/cri-dockerd.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    projectcalico.org/IPv4Address: 130.233.193.63/24
+                    projectcalico.org/IPv4IPIPTunnelAddr: 10.213.61.0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Thu, 07 Dec 2023 09:45:38 +0200
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  worker5
+  AcquireTime:     <unset>
+  RenewTime:       Sun, 10 Dec 2023 03:23:33 +0200
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Thu, 07 Dec 2023 09:45:43 +0200   Thu, 07 Dec 2023 09:45:43 +0200   CalicoIsUp                   Calico is running on this node
+  MemoryPressure       False   Sun, 10 Dec 2023 03:23:12 +0200   Thu, 07 Dec 2023 09:45:38 +0200   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Sun, 10 Dec 2023 03:23:12 +0200   Thu, 07 Dec 2023 09:45:38 +0200   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Sun, 10 Dec 2023 03:23:12 +0200   Thu, 07 Dec 2023 09:45:38 +0200   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Sun, 10 Dec 2023 03:23:12 +0200   Thu, 07 Dec 2023 09:45:40 +0200   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+Addresses:
+  InternalIP:  130.233.193.63
+  Hostname:    worker5
+Capacity:
+  cpu:                8
+  ephemeral-storage:  959786032Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             16014936Ki
+  pods:               110
+Allocatable:
+  cpu:                8
+  ephemeral-storage:  884538805627
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             15912536Ki
+  pods:               110
+System Info:
+  Machine ID:                 f338ef0bc27b41c394ef0bc465b630ef
+  System UUID:                d820e946-6ca7-d4f2-2d59-48210b574e1d
+  Boot ID:                    bbf16de6-8f8e-4e71-978b-03e40516b78a
+  Kernel Version:             6.2.0-36-generic
+  OS Image:                   Ubuntu 22.04.3 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://24.0.7
+  Kubelet Version:            v1.28.3
+  Kube-Proxy Version:         v1.28.3
+PodCIDR:                      10.0.5.0/24
+PodCIDRs:                     10.0.5.0/24
+Non-terminated Pods:          (5 in total)
+  Namespace                   Name                                    CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                    ------------  ----------  ---------------  -------------  ---
+  kepler                      kepler-exporter-h69l8                   100m (1%)     0 (0%)      400Mi (2%)       0 (0%)         2d1h
+  kube-system                 calico-node-pt22l                       250m (3%)     0 (0%)      0 (0%)           0 (0%)         2d17h
+  kube-system                 kube-proxy-bd8nq                        0 (0%)        0 (0%)      0 (0%)           0 (0%)         2d17h
+  monitoring                  node-exporter-hlsl4                     112m (1%)     270m (3%)   200Mi (1%)       220Mi (1%)     2d1h
+  monitoring                  prometheus-operator-749b97889c-jpxsb    110m (1%)     220m (2%)   120Mi (0%)       240Mi (1%)     2d1h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                572m (7%)   490m (6%)
+  memory             720Mi (4%)  460Mi (2%)
+  ephemeral-storage  0 (0%)      0 (0%)
+  hugepages-1Gi      0 (0%)      0 (0%)
+  hugepages-2Mi      0 (0%)      0 (0%)
+Events:              <none>
+
+# kubectl describe node worker2
