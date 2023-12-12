@@ -1,12 +1,8 @@
-MODEL: CUSTOM-20K
+python3 feeder.py --duration 1800 --breakpoints 200 --max_mbps 17
+    
+    NUM PODS        POD THROTTLE        AVG SCALING %
+    ----------------------------------------------------
+    5/5 PODS        NONE                NONE
+    1/5 PODS        3500                25%
 
-INPUT INTERVAL              GLOBAL CPU          DELAY
-
-1 MB                        40%                 ~0%
-2 MB                        148%                1m 15s
-3 MB                        305%                2m
-3.5 MB                      380%                3m 30s 
-4 MB                        434%                4m 45s
-5 MB                        434                 6m
-
----------------------------------------------------------------------------------
+    1/5 PODS        3500                90%

@@ -35,13 +35,13 @@ spec:
         ports:
         - containerPort: 8080
           name: http
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
+#        resources:
+#          limits:
+#            cpu: 200m
+#            memory: 200Mi
+#          requests:
+#            cpu: 100m
+#            memory: 100Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -57,13 +57,13 @@ spec:
         ports:
         - containerPort: 8443
           name: https
-        resources:
-          limits:
-            cpu: 20m
-            memory: 40Mi
-          requests:
-            cpu: 10m
-            memory: 20Mi
+#        resources:
+#          limits:
+#            cpu: 20m
+#            memory: 40Mi
+#          requests:
+#            cpu: 10m
+#            memory: 20Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
