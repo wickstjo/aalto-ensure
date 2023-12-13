@@ -29,6 +29,13 @@ parser.add_argument(
     default=(60*60*2),
     help="The experiment duration in seconds",
 )
+parser.add_argument(
+    "-c",
+    "--n_cycles",
+    type=int,
+    default=1,
+    help="How many day-night cycles should be performed",
+)
 
 def run():
 
@@ -88,12 +95,19 @@ def run():
         global action_cooldown
 
         # THE DEFAULT DAYNIGHT CYCLE WORKLOAD PERCENTAGES (01 => 23)
+        #default_cycle = [
+        #    0.24, 0.28, 0.32, 0.36, 0.40, 0.53, 
+        #    0.67, 0.80, 0.73, 0.65, 0.58, 0.50, 
+        #    0.58, 0.66, 0.74, 0.82, 0.95, 0.90, 
+        #    0.85, 0.80, 0.65, 0.50, 0.35, 0.20
+        #]
+
         default_cycle = [
-            0.24, 0.28, 0.32, 0.36, 0.40, 0.53, 
-            0.67, 0.80, 0.73, 0.65, 0.58, 0.50, 
-            0.58, 0.66, 0.74, 0.82, 0.95, 0.90, 
-            0.85, 0.80, 0.65, 0.50, 0.35, 0.20
-        ]
+            0.03, 0.06, 0.09, 0.12, 0.266, 0.412,
+            0.558, 0.704, 0.85, 0.7625, 0.675, 0.587,
+            0.5, 0.59, 0.68, 0.77, 0.86, 0.97,
+            0.813, 0.656, 0.5, 0.343, 0.186, 0.03
+        ] * pyargs.n_cycles
 
         # SCALE THE ARRAY WHILE MAINTAINING RATIOS
         real_cycle = resize_array(

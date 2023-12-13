@@ -1,8 +1,0 @@
-python3 feeder.py --duration 1800 --breakpoints 200 --max_mbps 17
-    
-    NUM PODS        POD THROTTLE        AVG SCALING %
-    ----------------------------------------------------
-    5/5 PODS        NONE                NONE
-    1/5 PODS        3500                25%
-
-    1/5 PODS        3500                90%
