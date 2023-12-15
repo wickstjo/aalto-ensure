@@ -57,14 +57,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1.1
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percentunit"
         },
         "overrides": []
       },
@@ -97,10 +93,22 @@
             "uid": "ea7e5ed8-565e-4e4c-9d71-c2affcd473ae"
           },
           "editorMode": "code",
-          "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesin_total{topic=\"$kafka_topic\"}[$time_window]))by(topic) / sum(rate(kafka_server_brokertopicmetrics_bytesout_total{topic=\"$kafka_topic\"}[$time_window]))by(topic)",
+          "expr": "(sum(rate(kafka_server_brokertopicmetrics_bytesout_total{topic=\"$kafka_topic\"}[$time_window]))by(topic) - sum(rate(kafka_server_brokertopicmetrics_bytesin_total{topic=\"$kafka_topic\"}[$time_window]))by(topic)) / sum(rate(kafka_server_brokertopicmetrics_bytesin_total{topic=\"$kafka_topic\"}[$time_window]))by(topic)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ea7e5ed8-565e-4e4c-9d71-c2affcd473ae"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(kafka_server_brokertopicmetrics_bytesin_total{topic=\"$kafka_topic\"}[$time_window]))by(topic) / sum(rate(kafka_server_brokertopicmetrics_bytesout_total{topic=\"$kafka_topic\"}[$time_window]))by(topic)",
+          "hide": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "I/O DELTA",
@@ -919,7 +927,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 22
       },
@@ -1018,8 +1026,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 6,
         "y": 22
       },
       "id": 88,
@@ -1120,8 +1128,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 12,
         "y": 22
       },
       "id": 91,
@@ -1156,6 +1164,108 @@
         }
       ],
       "title": "RAM USAGE (100% => 16 GB)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P1809F7CD0C75ACF3"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 75,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 22
+      },
+      "id": 92,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "editorMode": "code",
+          "expr": "sum(irate(node_network_receive_bytes_total{instance=\"master\",job=\"node-exporter\", device=~\"enp88s0|lo\"}[$time_window])*8)",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "NETWORK I/O",
       "type": "timeseries"
     },
     {
@@ -3658,6 +3768,6 @@
   "timezone": "browser",
   "title": "Ensure Project Dashboard",
   "uid": "ed14ce49-8763-4494-9d23-891af80c1757",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
