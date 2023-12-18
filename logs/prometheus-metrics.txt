@@ -364,7 +364,6 @@ grpc_client_msg_received_total
 grpc_client_msg_sent_total
 grpc_client_started_total
 
-
 http_request_duration_seconds_bucket
 http_request_duration_seconds_count
 http_request_duration_seconds_sum
