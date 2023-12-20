@@ -1,0 +1,31 @@
+200 BATCH SIZE == ~8.02 GB MEMORY
+
+    1 THREAD
+    1738/1728 (100.58%, 2.95m)                             kafka_utils_throttler_cleaner_io_count
+    EXTRACTION CONCLUDED IN:                               176.78 SECONDS
+
+    2 THREADS
+    1738/1728 (100.58%, 2.61m)                             kafka_utils_throttler_cleaner_io_count
+    EXTRACTION CONCLUDED IN:                               156.64 SECONDS
+
+    4 THREADS
+    1738/1728 (100.58%, 2.71m)                             kafka_utils_throttler_cleaner_io_count
+    EXTRACTION CONCLUDED IN:                               162.4 SECONDS
+
+    8 THREADS
+    1738/1728 (100.58%, 2.77m)                             apiserver_request_sli_duration_seconds_bucket
+    EXTRACTION CONCLUDED IN:                               166.51 SECONDS
+
+1K BATCH SIZE == 9.12 GB MEMORY
+
+    8 THREADS
+    1738/1728 (100.58%, 1.77m)                             apiserver_request_duration_seconds_bucket
+    EXTRACTION CONCLUDED IN:                               106.24 SECONDS
+
+    2 THREADS
+    1738/1728 (100.58%, 1.65m)                             kafka_utils_throttler_cleaner_io_count
+    EXTRACTION CONCLUDED IN:                               98.91 SECONDS
+
+    4 THREADS
+    1738/1728 (100.58%, 1.72m)                             kafka_network_requestmetrics_totaltimems
+    EXTRACTION CONCLUDED IN:                               102.93 SECONDS
