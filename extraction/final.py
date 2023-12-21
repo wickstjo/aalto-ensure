@@ -3,18 +3,15 @@ from datetime import datetime
 import time, math
 from IPython.display import clear_output
 from threading import Thread, Semaphore
+import time, math, random, argparse
 
-def get_names(port, allowed_prefix=''):
+def get_names(port, exclude):
     try:
         result = requests.get(f'http://130.233.193.117:{port}/api/v1/label/__name__/values')
         container = []
-
-        # TODO
-        # IMPLEMENT EXCLUSION LAMBDA
-            # REMOVE PROMETHETUS & GRAFANA PREFIXES
         
         for metric in result.json()['data']:
-            if metric[0:len(allowed_prefix)] == allowed_prefix:
+            if not exclude(metric):
                 container.append(metric)
 
         return container
@@ -60,7 +57,7 @@ def fetch_metric(base_path, prometheus_port, query, formatted_start, formatted_e
 
     # PROMETHEUS ONLY ALLOWS QUERIES WITH LESS THAN 11K ROWS
     # SEGMENT LARGE TIMESTAMPS INTO SMALLER PAIRS TO BYPASS THIS LIMITATION
-    segments = segment_timestamps(formatted_start, formatted_end, 1000)
+    segments = segment_timestamps(formatted_start, formatted_end, 4000)
 
     # LOOP THROUGH EACH SEGMENT, COMBINING THEIR QUERY OUTPUT
     for t1, t2 in segments:
@@ -112,7 +109,7 @@ class Tracker:
     def __init__(self):
         self.accumulator = Semaphore(1)
         self.value = 0
-        self.total = 1738
+        self.total = 1239
 
         self.exp_start = time.time()
         
@@ -131,7 +128,7 @@ class Tracker:
         self.value += 1
         percent = round((self.value/self.total) * 100, 2)
         prefix = f'{self.value}/{self.total} ({percent}%, {duration})'
-        n_spaces = ' ' * (55 - len(prefix))
+        n_spaces = ' ' * (40 - len(prefix))
         
         print(f'{prefix}{n_spaces}{query}', flush=True)
         self.accumulator.release()
@@ -161,19 +158,19 @@ def create_snapshot(start_time, end_time, n_steps):
     tracker = Tracker()
     threads = []
 
-    names = get_names(9090)
-    if names == False:
-        return
-
     EXP_START = time.time()
+
+    # FILTER OUT USELESS METRICS
+    server_1_filter = lambda x: x.startswith('prometheus_') or x.startswith('grafana_') or x.startswith('alertmanager_')
+    server_2_filter = lambda x: not x.startswith('kafka_')
     
     # FETCH KUBERNETES DATA FROM SERVER 1
-    for query in names:
+    for query in get_names(9090, server_1_filter):
         thread = Thread(target=fetch_metric, args=(snapshot_path, 9090, query, formatted_start, formatted_end, n_steps, parallelism, tracker))
         threads.append(thread)
 
     # FETCH KAFKA DATA FROM SERVER 2
-    for query in get_names(9091, 'kafka'):
+    for query in get_names(9091, server_2_filter):
         thread = Thread(target=fetch_metric, args=(snapshot_path, 9091, query, formatted_start, formatted_end, n_steps, parallelism, tracker))
         threads.append(thread)
 
@@ -184,5 +181,39 @@ def create_snapshot(start_time, end_time, n_steps):
     delta_time = round(time.time() - EXP_START, 2)
     print(f'\nEXTRACTION CONCLUDED IN: {delta_time} SECONDS')
 
+############################################################################################################################
+############################################################################################################################
+
+# PARSE PYTHON ARGUMENTS
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-s",
+    "--start",
+    type=str,
+    default='foo',
+    help="Experiment start",
+)
+
+parser.add_argument(
+    "-e",
+    "--end",
+    type=str,
+    default='bar',
+    help="Experiment end",
+)
+
+parser.add_argument(
+    "-i",
+    "--interval",
+    type=int,
+    default=1,
+    help="Fetch data every n seconds",
+)
+
+# TODO: ADD BATCH SIZE AS ARGUMENT?
+
 # GO
-create_snapshot('2023-12-20 11:53:30', '2023-12-20 13:55:30', 3)
+py_args = parser.parse_args()
+create_snapshot(py_args.start, py_args.end, py_args.interval)
+
+# clear && python3 snapshot.py --start "2023-12-21 06:18:02" --end "2023-12-21 06:29:06" --interval 3
