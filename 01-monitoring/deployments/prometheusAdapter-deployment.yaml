@@ -15,10 +15,10 @@ spec:
       app.kubernetes.io/component: metrics-adapter
       app.kubernetes.io/name: prometheus-adapter
       app.kubernetes.io/part-of: kube-prometheus
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+  # strategy:
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 1
   template:
     metadata:
       annotations:
@@ -57,13 +57,13 @@ spec:
             port: https
             scheme: HTTPS
           periodSeconds: 5
-        resources:
-          limits:
-            cpu: 250m
-            memory: 180Mi
-          requests:
-            cpu: 102m
-            memory: 180Mi
+        # resources:
+        #   limits:
+        #     cpu: 250m
+        #     memory: 180Mi
+        #   requests:
+        #     cpu: 102m
+        #     memory: 180Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:

@@ -33,9 +33,9 @@ spec:
   probeNamespaceSelector: {}
   probeSelector: {}
   replicas: 1
-#  resources:
-#    requests:
-#      memory: 400Mi
+  # resources:
+  #   requests:
+  #     memory: 400Mi
   ruleNamespaceSelector: {}
   ruleSelector: {}
   securityContext:

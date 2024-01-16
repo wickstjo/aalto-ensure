@@ -1,1 +1,1 @@
-kubectl delete -f deployment.yaml
+kubectl delete -f deployments/deployment.yaml
