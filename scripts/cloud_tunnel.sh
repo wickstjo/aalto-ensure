@@ -1,1 +1,1 @@
-ssh -R 2222:localhost:22 ansure@ansurevm.northeurope.cloudapp.azure.com
+screen -dmS cloud_proxy ssh -R 2222:localhost:22 ansure@ansurevm.northeurope.cloudapp.azure.com
