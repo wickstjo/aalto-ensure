@@ -1,0 +1,13 @@
+metricbeat.modules:
+  - module: prometheus
+    period: 10s
+    hosts:
+      - prometheus:9090
+    metricsets:
+      - collector
+
+output.elasticsearch:
+  hosts: 
+    - elasticsearch:9200
+  username: "elasticsearch"
+  password: "changeme"

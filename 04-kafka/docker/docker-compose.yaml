@@ -75,6 +75,19 @@ services:
 ############################################################################################
 ############################################################################################
 
+  # ELASTICSEARCH DB FOR PERMANENT METRICS STORAGE
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    mem_limit: 1G
+    environment: 
+      - 'discovery.type=single-node'
+      - 'xpack.security.enabled=false'
+      - 'xpack.security.enrollment.enabled=false'
+      - 'ELASTIC_PASSWORD_FILE=/pass.txt'
+      - 'ES_PORT=130.233.193.117:9200'
+    ports:
+      - 9200:9200
+
   # DEDICATED PROMETHEUS SERVER FOR JUST KAFKA
   # NOTE THE 9091 PORT, WHILE KUBE PROMETHEUS RUNS ON 9090
   prometheus:
@@ -91,19 +104,13 @@ services:
     depends_on:
        - elasticsearch
 
-######################################
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    mem_limit: 1G
-    environment: 
-      - 'discovery.type=single-node'
-      - 'xpack.security.enabled=false'
-      - 'xpack.security.enrollment.enabled=false'
-      - 'ELASTIC_PASSWORD_FILE=/pass.txt'
-      - 'ES_PORT=130.233.193.117:9200'
-    ports:
-      - 9200:9200
+  # MIDDLEMAN SERVICE FOR PROPAGATING METRICS FROM PROMETHEUS TO ELASTIC
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.12.0
+    volumes:
+      - ./metricbeat_config.yml:/usr/share/metricbeat/metricbeat.yml
+    depends_on:
+      - elasticsearch
 
 # docker compose up --force-recreate --renew-anon-volumes --remove-orphans
 
