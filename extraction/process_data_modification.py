@@ -61,8 +61,8 @@ def fetch_metric(base_path, prometheus_port, query, formatted_start, formatted_e
         print(t1, t2)
 
         # MAKE GET REQUEST
-        URL = f'http://130.233.193.117:{prometheus_port}/api/v1/query_range?query={query}&start={t1}&end={t2}&step={n_steps}s'
-        results = requests.get(URL).json()['data']['result']
+            URL = f'http://130.233.193.117:{prometheus_port}/api/v1/query_range?query={query}&start={t1}&end={t2}&step={n_steps}s'
+            results = requests.get(URL).json()['data']['result']
 
         # PREP THE BATCH DATAFRAME
         cols = [x for x in range(len(results))]

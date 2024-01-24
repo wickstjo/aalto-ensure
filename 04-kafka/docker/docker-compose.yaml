@@ -108,6 +108,8 @@ services:
   metricbeat:
     image: docker.elastic.co/beats/metricbeat:8.12.0
     volumes:
+
+      # CMOD 444 OR 666
       - ./metricbeat_config.yml:/usr/share/metricbeat/metricbeat.yml
     depends_on:
       - elasticsearch
