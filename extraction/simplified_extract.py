@@ -172,5 +172,5 @@ def create_snapshot(start_time, end_time, n_steps):
     pad_print(['SNAPSHOT PATH:', snapshot_path], 35)
     pad_print(['SNAPSHOT BYTES:', f'{num_bytes} ({num_mbs} MB)'], 35)
 
-create_snapshot('2024-01-24 12:52:00', '2024-01-24 13:52:00', 5)
-#create_snapshot('2024-01-24 01:00:00', '2024-01-24 09:00:00', 5)
+# create_snapshot('2024-01-24 12:52:00', '2024-01-24 13:52:00', 5)
+# create_snapshot('2024-01-24 01:00:00', '2024-01-24 09:00:00', 5)
