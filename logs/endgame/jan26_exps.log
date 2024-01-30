@@ -1,0 +1,73 @@
+
+python3 feeder.py --duration 28800 --breakpoints 800 --max_mbps 14 --n_cycles 6
+
+##################################################################################
+##################################################################################
+
+    ### 5 SECOND SAMPLING RATE
+
+EXTRACTION DURATION:               1169.35s
+SNAPSHOT PATH:                     snapshots/1706272305
+SNAPSHOT BYTES:                    41196139886 (41196.14 MB)
+
+EXTRACTION DURATION:               1186.04s
+SNAPSHOT PATH:                     snapshots/1706275648
+SNAPSHOT BYTES:                    41196139886 (41196.14 MB)
+
+##################################################################################
+##################################################################################
+
+    ### 10 SECOND SAMPLING RATE
+
+EXTRACTION DURATION:               686.22s
+SNAPSHOT PATH:                     snapshots/1706556942
+SNAPSHOT BYTES:                    23539827565 (23539.83 MB)
+
+EXTRACTION DURATION:               685.43s
+SNAPSHOT PATH:                     snapshots/1706559168
+SNAPSHOT BYTES:                    23539827565 (23539.83 MB)
+
+EXTRACTION DURATION:               695.73s
+SNAPSHOT PATH:                     snapshots/1706559878
+SNAPSHOT BYTES:                    23539827565 (23539.83 MB)
+
+zip -r 1706559168-8H-10s-SAMPLING snapshots/1706559168
+
+##################################################################################
+##################################################################################
+
+    ### 15 SECOND SAMPLING RATE
+
+EXTRACTION DURATION:               471.48s
+SNAPSHOT PATH:                     snapshots/1706591308
+SNAPSHOT BYTES:                    15925276098 (15925.28 MB)
+
+EXTRACTION DURATION:               472.66s
+SNAPSHOT PATH:                     snapshots/1706591796
+SNAPSHOT BYTES:                    15925276098 (15925.28 MB)
+
+EXTRACTION DURATION:               477.26s
+SNAPSHOT PATH:                     snapshots/1706592610
+SNAPSHOT BYTES:                    15925276098 (15925.28 MB)
+
+zip -r 1706591796-8H-15s-SAMPLING snapshots/1706591796
+
+##################################################################################
+##################################################################################
+
+8H EXP, 2K MILLICORE THROTTLE, 7MB FEED
+python3 feeder.py --duration 28800 --breakpoints 800 --max_mbps 7 --n_cycles 6
+
+EXTRACTION DURATION:               1304.84s
+SNAPSHOT PATH:                     snapshots/1706628939
+SNAPSHOT BYTES:                    46475117299 (46475.12 MB)
+
+EXTRACTION DURATION:               1308.29s
+SNAPSHOT PATH:                     snapshots/1706630298
+SNAPSHOT BYTES:                    46475117299 (46475.12 MB)
+
+##################################################################################
+##################################################################################
+
+8H EXP, 2K MILLICORE THROTTLE, 8MB FEED
+python3 feeder.py --duration 28800 --breakpoints 800 --max_mbps 8 --n_cycles 6
