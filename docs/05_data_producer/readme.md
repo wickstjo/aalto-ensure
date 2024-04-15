@@ -1,6 +1,11 @@
-## TABLE OF CONTENTS
+## Overview
 
-1. [Script input parameters](#)
+TODO
+
+<!-- ########################################################################################################## -->
+## Table of Contents
+
+1. [Input Parameters](#)
 2. [24H day/night cycle](#)
     1. [Default cycle](#)
     2. [Stretched cycle](#)
@@ -9,17 +14,31 @@
     2. [Coordinating thread](#)
     3. [Worker threads](#)
 
-<!-- ############################################################################ -->
+<!-- ########################################################################################################## -->
+## Input Parameters
 
-## SCRIPT INPUT PARAMETERS
+1. `--max_mbps` (`int`): What the maximum cumulative MB/s of the script should be.
+    - All workloads are scaled by a percentage of this value.
+    - If this value is too high, the cluster will gradually fall behind.
+        - In my experience, the `NUC` cluster's limit is roughly `15.5 MB/s`.
+2. `--duration` (`int`): The duration of the experiment defined in seconds.
+3. `--breakpoints` (`int`): How many breakpoints the 24h day-night cycle should contain.
+    - With 24 breakpoints, the workload can change quite drastically all of a sudden.
+    - Stretching the same cycle to `~200` breakpoints results in a smooth curve.
+    - Keep in mind that `Kubernetes` is quite slow (max 15s) at reacting to changes in workload.
+4. `--n_cycles` (`int`): How many day-night cycles should be repeated.
+    - We generally used 5-6 cycles to see if the cluster's behaviour stays the same.
 
-1. `max_mbps -m`: What the maximum cumulative MB/s of the script should be. All workloads are scaled by a percentage of this value.
-2. `duration -d`: The duration of the experiment defined in seconds.
-3. `breakpoints -b`: How many breakpoints the 24h day-night cycle should be stretched to in order to smoothen the curve.
-4. `n_cycles -c`: How many day-night cycles should be repeated.
+```bash
+# FOR EXAMPLE
+python3 app/feeder.py
+    --max_mbps 15
+    --duration 7200
+    --breakpoints 200
+    --n_cycles 6
+```
 
-<!-- ############################################################################ -->
-
+<!-- ########################################################################################################## -->
 ## 24H DAY-NIGHT CYCLE
 
 - 24 percentage values, each representying the workload % of that hour.
@@ -31,12 +50,10 @@
     - Arguably makes the traffic data more realistic.
     - Allows kubernetes to scale more gradually.
 
-<!-- ############################################################################ -->
-
 #### DEFAULT CYCLE
 ```python
 # DEFAULT: 24 BREAKPOINTS
-default_cycle = [
+[
     0.03,   0.06,   0.09,   0.12,   0.266,  0.412,
     0.558,  0.704,  0.85,   0.7625, 0.675,  0.587,
     0.5,    0.59,   0.68,   0.77,   0.86,   0.97,
@@ -47,7 +64,7 @@ default_cycle = [
 #### STRETCHED CYCLE
 ```python
 # STRETCHED TO 48 BREAKPOINTS
-stretched_cycle = [
+[
     0.03,   0.0447, 0.0594, 0.074,  0.0887, 0.1034,
     0.1181, 0.1821, 0.2536, 0.325,  0.3965, 0.4679,
     0.5394, 0.6108, 0.6823, 0.7537, 0.8251, 0.8221,
@@ -59,14 +76,14 @@ stretched_cycle = [
 ]
 ```
 
-<!-- ############################################################################ -->
-
+<!-- ########################################################################################################## -->
 ## FEEDING LOGIC
 
 <p align="center">
     <img src="architecture.png" alt="drawing" width="600"/>
 </p>
 
+<!-- ########################################################################################################## -->
 ### MAIN THREAD
 ---
 
@@ -80,6 +97,7 @@ stretched_cycle = [
 7. Creates a coordinating thread.
 8. Wait for both thread types to die.
 
+<!-- ########################################################################################################## -->
 ### COORDINATING THREAD
 ---
 
@@ -96,6 +114,7 @@ stretched_cycle = [
     4. Wait until the next breakpoint.
     5. Repeat until the experiment ends.
 
+<!-- ########################################################################################################## -->
 ### WORKER THREADS
 ---
 

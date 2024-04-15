@@ -1,4 +1,19 @@
-## 1. CONNECT TO THE CLUSTER REMOTELY
+## Overview
+
+TODO
+
+<!-- ########################################################################################################## -->
+## Table of Contents
+
+1. [Connect to the Cluster Remotely](#)
+2. [Port forward Monitoring Stack to remote location](#)
+3. [Setup Experiment Screens](#)
+    1. [Kafka Screen](#)
+    2. [Deployment Screen](#)
+    3. [Feeding Screen](#)
+
+<!-- ########################################################################################################## -->
+## 2. Connect to the Cluster Remotely
 ```bash
 # CONNECT TO THE CLOUD PROXY
 ssh ansure@ansurevm.northeurope.cloudapp.azure.com
@@ -33,7 +48,8 @@ ssh 130.233.193.63
 ssh worker5
 ```
 
-## 2. PORT FORWARD MONITORING STACK TO REMOTE LOCATION
+<!-- ########################################################################################################## -->
+## 3. Port forward Monitoring Stack to remote location
 
 - Script location: [`./01_cluster_port_forwards.sh`](01_cluster_port_forwards.sh)
 - Use port forwarding screens to make these services **locally** available through the master node.
@@ -67,9 +83,11 @@ screen -dmS grafana_proxy ssh -L 3000:localhost:3000 $CLOUD_PROXY
 screen -dmS prometheus_proxy ssh -L 9090:localhost:9090 $CLOUD_PROXY
 ```
 
-## 3. SETUP EXPERIMENT SCREENS
+<!-- ########################################################################################################## -->
+## 4. Setup Experiment Screens
 
-#### 3.1 KAFKA SCREEN
+<!-- ########################################################################################################## -->
+#### 4.1 Kafka Screen
 ---
 
 - Before every new experiment, you should kill your old `Kafka` and create a new one.
@@ -81,10 +99,12 @@ screen -dmS prometheus_proxy ssh -L 9090:localhost:9090 $CLOUD_PROXY
 screen -S exp_kafka
 
 # BOOT UP KAFKA FROM DOCKER, LIKE CHAPTER 3 DESCIRBED
-./aalto-ensure/kafka/docker/run.sh
+cd aalto_ensure/kafka/docker
+./run.sh
 ```
 
-#### 3.2 DEPLOYMENT SCREEN
+<!-- ########################################################################################################## -->
+#### 4.2 Deployment Screen
 ---
 
 - `Kafka` tends to react unpredictably when you push lots of data into a topic that doesn't already exist.
@@ -101,15 +121,42 @@ screen -S exp_kafka
 screen -S exp_deployment
 
 # THIS WILL TEST FOR FIVE TOPIC PARTITIONS
-./aalto-ensure/yolo/03_init_and_deploy.sh 5
+./aalto_ensure/04_yolo_consumer/03_init_and_deploy.sh 5
 ```
 
-#### 3.3 FEEDING SCREEN
+<!-- ########################################################################################################## -->
+#### 4.3 Feeding Screen
+---
+
+- Before you start, make sure that:
+    - `Kafka` has been deployed successfully.
+    - The `Kubernetes` pods are been deployed successfully.
+        - I confirm this via `Grafana` dashboards.
+- This window must be active for the duration of the experiment.
+    - Once the script is started, suspend the screen with `CTRL+A+D`
+    - Note that you can enter the screen again with `screen -r exp_feeding`
+- By stopping the script with `CTRL+C`, the helper threads die gracefully.
 
 
-
-<!--
 ```bash
+# CREATE THE SCREEN ONCE
+screen -S exp_feeding
 
+# PATH TO THE RELEVANT DIR
+cd aalto_ensure/05_yolo_producer/app
 ```
--->
+
+```bash
+# SET THE FEEDING PARAMETERS
+EXP_DURATION=28800
+EXP_BREAKPOINTS=800
+EXP_MAX_MBPS=14
+EXP_CYCLES=6
+
+# RUN THE SCRIPT
+python3 feeder.py
+    --duration $EXP_DURATION
+    --breakpoints $EXP_BREAKPOINTS
+    --max_mbps $EXP_MAX_MBPS
+    --n_cycles $EXP_CYCLES
+```

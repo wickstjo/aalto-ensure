@@ -1,3 +1,21 @@
+## Overview
+
+- Deploy systems that allow close monitoring of the cluster's resources:
+    - `Prometheus` for scraping and temporarily storing metrics data.
+    - `Grafana` for observing the metrics in near-real time through customizable dashboards.
+- Deploy `Kepler` modules on each cluster node, allowing the tracking of energy usage.
+- Deploy a `Kubernetes Metrics Server` to allow the cluster to dynamically scale pods.
+
+<!-- ########################################################################################################## -->
+## Table of Contents
+
+1. [Deploy the `Prometheus` & `Grafana` Monitoring Stack](#)
+2. [Deploy `Kepler` node monitors](#)
+3. [Deploy the `Kubernetes` Metrics Server](#)
+4. [Upload `Grafana` Dashboards](#)
+5. [Setup `Kubernetes` port forwards](#)
+
+<!-- ########################################################################################################## -->
 ## 1. DEPLOY PROMETHEUS & GRAFANA MONITORING STACK
 
 - Deploy cached (modified) files: [`./01_cached_monitoring.sh`](01_cached_monitoring.sh)
@@ -32,6 +50,7 @@ kubectl -n monitoring port-forward svc/grafana 3000
 kubectl -n monitoring port-forward svc/prometheus-k8s 9090
 ```
 
+<!-- ########################################################################################################## -->
 ## 2. DEPLOY KEPLER NODE MONITORS
 
 - Deploy cached (modified) files: [`./02_cached_kepler.sh`](02_cached_kepler.sh)
@@ -63,6 +82,7 @@ make build-manifest OPTS="PROMETHEUS_DEPLOY HIGH_GRANULARITY ESTIMATOR_SIDECAR_D
 kubectl apply -f _output/generated-manifest/deployment.yaml
 ```
 
+<!-- ########################################################################################################## -->
 ## 3. KUBERNETES METRICS SERVER
 
 - Allows kubernetes to track the resource usage of individual pods.
@@ -72,6 +92,7 @@ kubectl apply -f _output/generated-manifest/deployment.yaml
 kubectl apply -f kube_metrics_server.yaml
 ```
 
+<!-- ########################################################################################################## -->
 ## 4. GRAFANA DASHBOARDS
 
 - `Grafana` links up with `Prometheus` to render real-time data dashboards.
@@ -88,6 +109,7 @@ Kafka Metrics:      grafana_dashboards/kafka_metrics.json
 Kepler Metrics:     grafana_dashboards/kepler_metrics.json
 ```
 
+<!-- ########################################################################################################## -->
 ## 99. KUBERNETES PORT FORWARDS & CLOUD PROXIES
 
 - Once deployed, `Grafana` is available at port `3000`.

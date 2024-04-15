@@ -1,4 +1,4 @@
-## DIR OVERVIEW
+## Overview
 
 - We will use Kafka to transport data to worker-pods running in Kubernetes.
 - Tracking Kafka's performance is imperative for assessing experiments.
@@ -9,6 +9,16 @@
     - Instead, we run `Kafka`, `Zookeeper` and a separate `Prometheus` instance externally.
     - Once an experiment has been performed, the data from both `Prometheus` instances (one for Kubernetes, one for Kafka) are aggregated and analyzed together.
 
+<!-- ########################################################################################################## -->
+## Table of Contents
+
+1. [Kafka's Docker Compose](#)
+2. [Customization](#)
+    1. [Shared Broker Vars](#)
+    2. [Unique Broker Vars](#)
+    3. [Prometheus Vars](#)
+
+<!-- ########################################################################################################## -->
 ## KAFKA'S DOCKER COMPOSE
 
 - The docker-compose file: `docker-compose.yaml`:
@@ -31,6 +41,7 @@ read -p "Press enter to continue..."
 docker compose up --force-recreate --renew-anon-volumes --remove-orphans
 ```
 
+<!-- ########################################################################################################## -->
 ## SHARED BROKER VARS
 
 - The Kafka brokers share most variable values.
@@ -60,6 +71,7 @@ x-kafka_env: &kafka_env
   KAFKA_JMX_OPTS: "-javaagent:/usr/app/jmx_prometheus_javaagent.jar=11001:/usr/app/kafka_scraper.yml"
 ```
 
+<!-- ########################################################################################################## -->
 ## UNIQUE BROKER VARS
 
 - However, the following variable values must be unique for each broker:
@@ -93,6 +105,7 @@ kafka_broker_2:
         KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_2:11000,PLAINTEXT_HOST://130.233.193.117:10002
 ```
 
+<!-- ########################################################################################################## -->
 ## PROMETHEUS VARS
 
 - You can permanently store the prometheus' data on-disk.
